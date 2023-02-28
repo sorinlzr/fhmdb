@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.features.MovieSearchService;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
@@ -13,8 +14,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class HomeController implements Initializable {
     @FXML
@@ -50,9 +53,15 @@ public class HomeController implements Initializable {
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
 
+        searchField.setOnKeyTyped(keyEvent -> {
+            String searchTerm = searchField.getText().trim();
+            searchKeyword(searchTerm);
+        });
+
+
         // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
+            if (sortBtn.getText().equals("Sort (asc)")) {
                 // TODO sort observableMovies ascending
                 sortBtn.setText("Sort (desc)");
             } else {
@@ -62,5 +71,21 @@ public class HomeController implements Initializable {
         });
 
 
+    }
+
+    /**
+     * This method performs a search operation on a list of movies based on a given search term.
+     * It updates the observableMovies list with the search results.
+     *
+     * @param searchTerm The keyword to search in the movie titles and descriptions.
+     */
+    private void searchKeyword(String searchTerm) {
+        observableMovies.setAll(allMovies);
+        MovieSearchService movieSearchService = new MovieSearchService(observableMovies);
+        Set<Movie> searchResults = new HashSet<>();
+        searchResults.addAll(movieSearchService.searchInMovieTitle(searchTerm));
+        searchResults.addAll(movieSearchService.searchInMovieDescription(searchTerm));
+        observableMovies.clear();
+        observableMovies.addAll(searchResults);
     }
 }
