@@ -3,7 +3,7 @@ package at.ac.fhcampuswien.fhmdb.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Movie {
+public class Movie implements Comparable<Movie>{
     private String title;
     private String description;
     private List<Genre> genres;
@@ -115,5 +115,11 @@ public class Movie {
         movies.add(movie);
 
         return movies;
+    }
+
+    public int compareTo(Movie movie) {
+        if (movie == null) throw new IllegalArgumentException("Movie cannot be null!");
+
+        return this.title.compareTo(movie.title);
     }
 }

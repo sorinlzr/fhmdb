@@ -13,8 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class HomeController implements Initializable {
     @FXML
@@ -53,14 +52,12 @@ public class HomeController implements Initializable {
         // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
             if(sortBtn.getText().equals("Sort (asc)")) {
-                // TODO sort observableMovies ascending
+                observableMovies.sort(Comparator.naturalOrder());
                 sortBtn.setText("Sort (desc)");
             } else {
-                // TODO sort observableMovies descending
+                observableMovies.sort(Collections.reverseOrder());
                 sortBtn.setText("Sort (asc)");
             }
         });
-
-
     }
 }
