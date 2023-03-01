@@ -54,7 +54,7 @@ public class HomeController implements Initializable {
         // either set event handlers in the fxml file (onAction) or add them here
 
         searchField.setOnKeyTyped(keyEvent -> {
-            String searchTerm = searchField.getText().trim();
+            String searchTerm = searchField.getText();
             searchKeyword(searchTerm);
         });
 
@@ -83,8 +83,7 @@ public class HomeController implements Initializable {
         observableMovies.setAll(allMovies);
         MovieSearchService movieSearchService = new MovieSearchService(observableMovies);
         Set<Movie> searchResults = new HashSet<>();
-        searchResults.addAll(movieSearchService.searchInMovieTitle(searchTerm));
-        searchResults.addAll(movieSearchService.searchInMovieDescription(searchTerm));
+        searchResults.addAll(movieSearchService.searchForMovie(searchTerm));
         observableMovies.clear();
         observableMovies.addAll(searchResults);
     }
