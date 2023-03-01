@@ -53,6 +53,15 @@ public class HomeController implements Initializable {
 
         genreComboBox.setOnAction(actionEvent -> filterByGenre(filteredList));
 
+        searchBtn.setOnAction(actionEvent -> {
+            searchField.clear();
+            genreComboBox.setValue(Genre.ALL);
+            if (genreComboBox.getValue() != null) {
+                genreComboBox.getSelectionModel().clearSelection();
+            }
+            filteredList.setPredicate(movie -> true);
+        });
+
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
 
