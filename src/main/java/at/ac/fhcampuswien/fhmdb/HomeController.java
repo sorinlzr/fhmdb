@@ -18,7 +18,7 @@ import java.util.*;
 
 public class HomeController implements Initializable {
     @FXML
-    public JFXButton searchBtn;
+    public JFXButton resetFilterBtn;
 
     @FXML
     public TextField searchField;
@@ -36,6 +36,7 @@ public class HomeController implements Initializable {
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     private final FilteredList<Movie> filteredList = new FilteredList<>(observableMovies);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
@@ -46,14 +47,6 @@ public class HomeController implements Initializable {
 
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
-
-        // TODO add event handlers to buttons and call the regarding methods
-        // either set event handlers in the fxml file (onAction) or add them here
-
-        genreComboBox.setOnAction(actionEvent -> filterByGenre(filteredList));
-
-        // TODO add event handlers to buttons and call the regarding methods
-        // either set event handlers in the fxml file (onAction) or add them here
 
         // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
@@ -67,7 +60,16 @@ public class HomeController implements Initializable {
         });
     }
 
-    public void filterByGenre(FilteredList<Movie> filteredList) {
+    public void resetFilterCriteria() {
+        searchField.clear();
+        genreComboBox.setValue(Genre.ALL);
+        if (genreComboBox.getValue() != null) {
+            genreComboBox.getSelectionModel().clearSelection();
+        }
+        filteredList.setPredicate(movie -> true);
+    }
+
+    public void selectGenre() {
         filteredList.setPredicate(movie -> {
             if (Genre.ALL.equals(genreComboBox.getValue())) {
                 return true;

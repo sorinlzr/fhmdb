@@ -31,8 +31,8 @@
       <children>
          <JFXButton fx:id="sortBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Sort (asc)" />
          <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0" promptText="Search FHMDb" />
-         <JFXComboBox fx:id="genreComboBox" focusColor="#f5c518" styleClass="filter-combo-box" stylesheets="@styles.css" />
-         <JFXButton fx:id="searchBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Reset Filter" />
+         <JFXComboBox fx:id="genreComboBox" onAction="#selectGenre" focusColor="#f5c518" styleClass="filter-combo-box" stylesheets="@styles.css" />
+         <JFXButton fx:id="resetFilterBtn" onAction="#resetFilterCriteria" styleClass="background-yellow" stylesheets="@styles.css" text="Reset Filter" />
       </children>
       <VBox.margin>
          <Insets />
