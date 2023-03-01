@@ -49,7 +49,11 @@ public class HomeController implements Initializable {
 
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
-        searchBtn.setOnAction(actionEvent -> filteredList.setPredicate(movie -> movie.getGenres().contains(genreComboBox.getValue())));
+
+        genreComboBox.setOnAction(actionEvent -> filterByGenre(filteredList));
+
+        // TODO add event handlers to buttons and call the regarding methods
+        // either set event handlers in the fxml file (onAction) or add them here
 
         // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
@@ -59,6 +63,16 @@ public class HomeController implements Initializable {
             } else {
                 observableMovies.sort(Collections.reverseOrder());
                 sortBtn.setText("Sort (asc)");
+            }
+        });
+    }
+
+    public void filterByGenre(FilteredList<Movie> filteredList) {
+        filteredList.setPredicate(movie -> {
+            if (Genre.ALL.equals(genreComboBox.getValue())) {
+                return true;
+            } else {
+                return movie.getGenres().contains(genreComboBox.getValue());
             }
         });
     }
