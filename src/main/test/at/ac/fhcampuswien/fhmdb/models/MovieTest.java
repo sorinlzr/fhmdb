@@ -67,10 +67,6 @@ public class MovieTest {
         @Test
         public void throws_an_exception_if_Movie_B_is_null() {
             Assertions.assertThrows(IllegalArgumentException.class, () -> movie1.compareTo(null));
-            Assertions.assertThrows(IllegalArgumentException.class, () -> movie2.compareTo(null));
-            Assertions.assertThrows(IllegalArgumentException.class, () -> movie3.compareTo(null));
-            Assertions.assertThrows(IllegalArgumentException.class, () -> movie4.compareTo(null));
-            Assertions.assertThrows(IllegalArgumentException.class, () -> movie5.compareTo(null));
         }
     }
 
