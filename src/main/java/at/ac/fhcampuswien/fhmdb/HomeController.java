@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.service.MovieFilterService;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -24,10 +25,10 @@ public class HomeController implements Initializable {
     public TextField searchField;
 
     @FXML
-    public JFXListView movieListView;
+    public JFXListView<Movie> movieListView;
 
     @FXML
-    public JFXComboBox genreComboBox;
+    public JFXComboBox<Genre> genreComboBox;
 
     @FXML
     public JFXButton sortBtn;
@@ -61,21 +62,10 @@ public class HomeController implements Initializable {
     }
 
     public void resetFilterCriteria() {
-        searchField.clear();
-        genreComboBox.setValue(Genre.ALL);
-        if (genreComboBox.getValue() != null) {
-            genreComboBox.getSelectionModel().clearSelection();
-        }
-        filteredList.setPredicate(movie -> true);
+        MovieFilterService.resetFilterCriteria(genreComboBox, filteredList, searchField);
     }
 
     public void selectGenre() {
-        filteredList.setPredicate(movie -> {
-            if (Genre.ALL.equals(genreComboBox.getValue())) {
-                return true;
-            } else {
-                return movie.getGenres().contains(genreComboBox.getValue());
-            }
-        });
+        MovieFilterService.selectSpecificGenre(genreComboBox, filteredList);
     }
 }
