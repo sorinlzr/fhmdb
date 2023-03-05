@@ -2,6 +2,8 @@ package at.ac.fhcampuswien.fhmdb.models;
 
 import org.junit.jupiter.api.*;
 
+import java.util.List;
+
 public class MovieTest {
 
     @Nested
@@ -70,4 +72,15 @@ public class MovieTest {
         }
     }
 
+    @Nested
+    public class InitializeMovies {
+        @Test
+        public void returns_a_list_of_movies_with_more_than_0_movies() {
+            List<Movie> movies;
+
+            movies = Movie.initializeMovies();
+
+            Assertions.assertTrue(movies.size() > 0);
+        }
+    }
 }
