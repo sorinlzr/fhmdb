@@ -1,4 +1,4 @@
-package at.ac.fhcampuswien.fhmdb.features;
+package at.ac.fhcampuswien.fhmdb.service;
 
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import java.util.ArrayList;

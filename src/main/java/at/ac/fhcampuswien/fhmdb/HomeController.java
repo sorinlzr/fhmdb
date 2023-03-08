@@ -1,8 +1,9 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.service.MovieFilterService;
+import at.ac.fhcampuswien.fhmdb.service.MovieSearchService;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import at.ac.fhcampuswien.fhmdb.service.MovieFilterService;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -37,10 +38,12 @@ public class HomeController implements Initializable {
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     private final FilteredList<Movie> filteredList = new FilteredList<>(observableMovies);
+    private MovieSearchService movieSearchService;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
+        movieSearchService = new MovieSearchService(observableMovies); // initialize search service
 
         // initialize UI stuff
         movieListView.setItems(filteredList);   // set data of observable list to list view
@@ -48,6 +51,11 @@ public class HomeController implements Initializable {
 
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
+
+        searchField.setOnKeyTyped(keyEvent -> {
+            String searchTerm = searchField.getText().trim();
+            searchKeyword(searchTerm);
+        });
 
         // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
@@ -67,5 +75,11 @@ public class HomeController implements Initializable {
 
     public void selectGenre() {
         MovieFilterService.selectSpecificGenre(genreComboBox, filteredList);
+    }
+
+    private void searchKeyword(String searchTerm) {
+        Set<Movie> searchResults = new HashSet<>();
+        searchResults.addAll(movieSearchService.searchForMovie(searchTerm));
+        filteredList.setPredicate(searchResults::contains);
     }
 }

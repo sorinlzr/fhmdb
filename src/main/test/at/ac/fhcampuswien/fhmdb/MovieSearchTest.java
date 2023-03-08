@@ -1,6 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.features.MovieSearchService;
+import at.ac.fhcampuswien.fhmdb.service.MovieSearchService;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import org.junit.jupiter.api.Test;
 
