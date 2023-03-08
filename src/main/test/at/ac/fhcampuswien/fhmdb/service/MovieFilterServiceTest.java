@@ -72,7 +72,7 @@ class MovieFilterServiceTest {
         public void shouldResetSelectionAndClearInputField() {
             searchField.setText("test");
             genreComboBox.setValue(Genre.ACTION);
-            MovieFilterService.selectSpecificGenre(genreComboBox, filteredList);
+            MovieFilterService.selectSpecificGenre(genreComboBox.getValue(), filteredList);
             assertEquals(5, observableMovies.size());
             assertEquals(3, filteredList.size());
             assertEquals("test", searchField.getText());
@@ -102,7 +102,7 @@ class MovieFilterServiceTest {
         @Test
         public void shouldSelectOnlySpecificGenre() {
             genreComboBox.setValue(Genre.ACTION);
-            MovieFilterService.selectSpecificGenre(genreComboBox, filteredList);
+            MovieFilterService.selectSpecificGenre(genreComboBox.getValue(), filteredList);
             assertEquals(5, observableMovies.size());
             assertEquals(3, filteredList.size());
         }
@@ -110,9 +110,9 @@ class MovieFilterServiceTest {
         @Test
         public void shouldSelectOnlySpecificGenreAfterChangingSelection() {
             genreComboBox.setValue(Genre.ACTION);
-            MovieFilterService.selectSpecificGenre(genreComboBox, filteredList);
+            MovieFilterService.selectSpecificGenre(genreComboBox.getValue(), filteredList);
             genreComboBox.setValue(Genre.SCIENCE_FICTION);
-            MovieFilterService.selectSpecificGenre(genreComboBox, filteredList);
+            MovieFilterService.selectSpecificGenre(genreComboBox.getValue(), filteredList);
             assertEquals(5, observableMovies.size());
             assertEquals(2, filteredList.size());
         }
@@ -120,9 +120,9 @@ class MovieFilterServiceTest {
         @Test
         public void shouldSelectAllMoviesAfterChangingSelectionToAll() {
             genreComboBox.setValue(Genre.ACTION);
-            MovieFilterService.selectSpecificGenre(genreComboBox, filteredList);
+            MovieFilterService.selectSpecificGenre(genreComboBox.getValue(), filteredList);
             genreComboBox.setValue(Genre.ALL);
-            MovieFilterService.selectSpecificGenre(genreComboBox, filteredList);
+            MovieFilterService.selectSpecificGenre(genreComboBox.getValue(), filteredList);
             assertEquals(5, observableMovies.size());
             assertEquals(5, filteredList.size());
         }

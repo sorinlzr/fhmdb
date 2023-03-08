@@ -19,13 +19,13 @@ public class MovieFilterService {
         filteredList.setPredicate(movie -> true);
     }
 
-    public static void selectSpecificGenre(JFXComboBox<Genre> genreComboBox,
+    public static void selectSpecificGenre(Genre genre,
                                            FilteredList<Movie> filteredList) {
         filteredList.setPredicate(movie -> {
-            if (Genre.ALL.equals(genreComboBox.getValue())) {
+            if (Genre.ALL.equals(genre)) {
                 return true;
             } else {
-                return movie.getGenres().contains(genreComboBox.getValue());
+                return movie.getGenres().contains(genre);
             }
         });
     }
