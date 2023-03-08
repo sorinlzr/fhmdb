@@ -2,6 +2,10 @@ package at.ac.fhcampuswien.fhmdb.models;
 
 import org.junit.jupiter.api.*;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MovieTest {
 
     @Nested
@@ -70,4 +74,43 @@ public class MovieTest {
         }
     }
 
+    @Nested
+    public class InitializeMovies {
+        @Test
+        public void returns_a_list_of_movies_with_more_than_0_movies() {
+            List<Movie> movies;
+
+            movies = Movie.initializeMovies();
+
+            Assertions.assertTrue(movies.size() > 0);
+        }
+
+        @Test
+        public void contains_a_movie_with_all_properties_filled_out() throws NoSuchFieldException {
+            List<Movie> movies;
+            List<Genre> genresValues = new ArrayList<>();
+
+            Field title = Movie.class.getDeclaredField("title");
+            Field description = Movie.class.getDeclaredField("description");
+            Field genres = Movie.class.getDeclaredField("genres");
+
+            movies = Movie.initializeMovies();
+            genresValues.add(Genre.ALL);
+
+            title.setAccessible(true);
+            description.setAccessible(true);
+            genres.setAccessible(true);
+
+            Assertions.assertTrue(movies.stream().anyMatch(movie -> {
+                try {
+                    return title.get(movie) != null && !title.get(movie).toString().isBlank()
+                            && description.get(movie) != null && !description.get(movie).toString().isBlank()
+                            && genres.get(movie) != null && !genres.get(movie).equals(genresValues);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }));
+        }
+    }
 }
