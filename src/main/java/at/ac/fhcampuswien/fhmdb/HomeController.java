@@ -74,7 +74,7 @@ public class HomeController implements Initializable {
     }
 
     public void selectGenre() {
-        MovieFilterService.selectSpecificGenre(genreComboBox, filteredList);
+        MovieFilterService.selectSpecificGenre(genreComboBox.getValue(), filteredList);
     }
 
     private void searchKeyword(String searchTerm) {
