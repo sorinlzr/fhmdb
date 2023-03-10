@@ -45,15 +45,6 @@ class HomeControllerTest {
             fail("Not implemented yet");
         }
 
-        @Test
-        public void SearchFieldIsResetAndThenGenreIsResetAndThenGenreIsSelectedAgain_thenFilteredListShouldContainOnlyMoviesThatMatchGenre() {
-            fail("Not implemented yet");
-        }
-
-        @Test
-        public void SearchFieldIsResetAndThenGenreIsResetAndThenSearchFieldIsFilledAgain_thenFilteredListShouldContainOnlyMoviesThatMatchSearchCriteria() {
-            fail("Not implemented yet");
-        }
     }
 
 }
