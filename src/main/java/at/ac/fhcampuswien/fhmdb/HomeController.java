@@ -52,10 +52,7 @@ public class HomeController implements Initializable {
 
         genreComboBox.setOnAction(actionEvent -> searchForMovie(searchField.getText().trim(), genreComboBox.getValue(), filteredList, observableMovies));
 
-        searchField.setOnKeyTyped(keyEvent -> {
-            String searchTerm = searchField.getText().trim();
-            searchForMovie(searchTerm, genreComboBox.getValue(), filteredList, observableMovies);
-        });
+        searchField.setOnKeyTyped(keyEvent -> searchForMovie(searchField.getText().trim(), genreComboBox.getValue(), filteredList, observableMovies));
 
         // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
