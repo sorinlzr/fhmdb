@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.service;
 
+import at.ac.fhcampuswien.fhmdb.HomeController;
 import at.ac.fhcampuswien.fhmdb.TestBase;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
@@ -74,7 +75,7 @@ class MovieFilterServiceTest {
             assertEquals(3, filteredList.size());
             assertEquals("test", searchField.getText());
 
-            MovieFilterService.resetFilterCriteria(genreComboBox, filteredList, searchField);
+            HomeController.resetFilterCriteria(genreComboBox, filteredList, searchField);
             assertTrue(genreComboBox.getSelectionModel().isEmpty());
             assertEquals(5, observableMovies.size());
             assertEquals(5, filteredList.size());

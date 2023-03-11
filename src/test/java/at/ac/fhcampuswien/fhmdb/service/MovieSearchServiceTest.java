@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MovieSearchServiceTest {
 
-    static MovieSearchService movieSearchService;
     static List<Movie> movies;
 
 
@@ -28,139 +27,138 @@ class MovieSearchServiceTest {
                 new Movie("Tenet", "To be honest, I am still trying to figure out what happened in this movie"),
                 new Movie("Independence Day", "A movie inspired by true events")
         );
-        movieSearchService = new MovieSearchService(movies);
     }
 
     @Test
     void SearchInMovieTitleWithValidTerm() {
-        List<Movie> result = movieSearchService.searchInMovieTitle("Harry Potter");
+        List<Movie> result = MovieSearchService.searchInMovieTitle("Harry Potter", movies);
         assertEquals(1, result.size());
     }
 
     @Test
     void SearchInMovieDescriptionWithValidTerm() {
-        List<Movie> result = movieSearchService.searchInMovieDescription("nose");
+        List<Movie> result = MovieSearchService.searchInMovieDescription("nose", movies);
         assertEquals(1, result.size());
     }
 
 
     @Test
     void SearchInMovieTitleWithMultipleTerms() {
-        List<Movie> result = movieSearchService.searchInMovieTitle("Star Wars: Episode");
+        List<Movie> result = MovieSearchService.searchInMovieTitle("Star Wars: Episode", movies);
         assertEquals(2, result.size());
     }
 
     @Test
     void SearchInMovieDescriptionWithMultipleTerms() {
-        List<Movie> result = movieSearchService.searchInMovieDescription("without a nose");
+        List<Movie> result = MovieSearchService.searchInMovieDescription("without a nose", movies);
         assertEquals(1, result.size());
     }
 
     @Test
     void SearchInMovieTitleWithEmptyQuery() {
-        List<Movie> result = movieSearchService.searchInMovieTitle("");
+        List<Movie> result = MovieSearchService.searchInMovieTitle("", movies);
         assertEquals(movies.size(), result.size());
     }
 
     @Test
     void SearchInMovieDescriptionWithEmptyQuery() {
-        List<Movie> result = movieSearchService.searchInMovieDescription("");
+        List<Movie> result = MovieSearchService.searchInMovieDescription("", movies);
         assertEquals(movies.size(), result.size());
     }
 
     @Test
     void SearchInMovieTitleWithInvalidTerm() {
-        List<Movie> result = movieSearchService.searchInMovieTitle("Xyz");
+        List<Movie> result = MovieSearchService.searchInMovieTitle("Xyz", movies);
         assertEquals(0, result.size());
     }
 
     @Test
     void SearchInMovieDescriptionWithInvalidTerm() {
-        List<Movie> result = movieSearchService.searchInMovieDescription("Xyz");
+        List<Movie> result = MovieSearchService.searchInMovieDescription("Xyz", movies);
         assertEquals(0, result.size());
     }
 
     @Test
     void SearchInMovieTitleWithSpecialChars() {
-        List<Movie> result = movieSearchService.searchInMovieTitle("$#@!%");
+        List<Movie> result = MovieSearchService.searchInMovieTitle("$#@!%", movies);
         assertEquals(0, result.size());
     }
 
     @Test
     void SearchInMovieDescriptionWithSpecialChars() {
-        List<Movie> result = movieSearchService.searchInMovieDescription("$#@!%");
+        List<Movie> result = MovieSearchService.searchInMovieDescription("$#@!%", movies);
         assertEquals(0, result.size());
     }
 
     @Test
     void SearchInMovieTitleWithLeadingTrailingSpaces() {
-        List<Movie> result = movieSearchService.searchInMovieTitle("  Titanic  ");
+        List<Movie> result = MovieSearchService.searchInMovieTitle("  Titanic  ", movies);
         assertEquals(1, result.size());
     }
 
     @Test
     void SearchInMovieDescriptionWithLeadingTrailingSpaces() {
-        List<Movie> result = movieSearchService.searchInMovieDescription("  nose  ");
+        List<Movie> result = MovieSearchService.searchInMovieDescription("  nose  ", movies);
         assertEquals(1, result.size());
     }
 
     @Test
     void SearchInMovieTitleWithMultipleResults() {
-        List<Movie> result = movieSearchService.searchInMovieTitle("Star Wars");
+        List<Movie> result = MovieSearchService.searchInMovieTitle("Star Wars", movies);
         assertEquals(2, result.size());
     }
 
     @Test
     void SearchInMovieDescriptionWithMultipleResults() {
-        List<Movie> result = movieSearchService.searchInMovieDescription("movie");
+        List<Movie> result = MovieSearchService.searchInMovieDescription("movie", movies);
         assertEquals(2, result.size());
     }
 
     @Test
     void SearchInMovieTitleWithMisspelledQuery() {
-        List<Movie> result = movieSearchService.searchInMovieTitle("Harri Pottr");
+        List<Movie> result = MovieSearchService.searchInMovieTitle("Harri Pottr", movies);
         assertEquals(0, result.size());
     }
 
     @Test
     void SearchInMovieDescriptionWithMisspelledQuery() {
-        List<Movie> result = movieSearchService.searchInMovieDescription("bqat");
+        List<Movie> result = MovieSearchService.searchInMovieDescription("bqat", movies);
         assertEquals(0, result.size());
     }
 
     @Test
     void SearchInMovieTitleWithUppercaseQuery() {
-        List<Movie> result = movieSearchService.searchInMovieTitle("TITANIC");
+        List<Movie> result = MovieSearchService.searchInMovieTitle("TITANIC", movies);
         assertEquals(1, result.size());
     }
 
     @Test
     void SearchInMovieDescriptionWithUppercaseQuery() {
-        List<Movie> result = movieSearchService.searchInMovieDescription("BOAT");
+        List<Movie> result = MovieSearchService.searchInMovieDescription("BOAT", movies);
         assertEquals(1, result.size());
     }
 
     @Test
     void SearchInMovieTitleWithLowercaseQuery() {
-        List<Movie> result = movieSearchService.searchInMovieTitle("titanic");
+        List<Movie> result = MovieSearchService.searchInMovieTitle("titanic", movies);
         assertEquals(1, result.size());
     }
 
     @Test
     void SearchInMovieTitleWithMixedCaseQuery() {
-        List<Movie> result = movieSearchService.searchInMovieTitle("HaRRy pOTTer");
+        List<Movie> result = MovieSearchService.searchInMovieTitle("HaRRy pOTTer", movies);
         assertEquals(1, result.size());
     }
 
     @Test
     void SearchInMovieDescriptionWithMixedCaseQuery() {
-        List<Movie> result = movieSearchService.searchInMovieDescription("bOaT");
+        List<Movie> result = MovieSearchService.searchInMovieDescription("bOaT", movies);
         assertEquals(1, result.size());
     }
 
     @Test
     void IfResultAppearsOnlyOnceInTheSetOfResults() {
-        Set<Movie> result = movieSearchService.searchForMovie("die");
+        Set<Movie> result = MovieSearchService.searchForMovie("die", movies);
         assertEquals(1, result.size());
     }
 }

@@ -38,12 +38,10 @@ public class HomeController implements Initializable {
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     private final FilteredList<Movie> filteredList = new FilteredList<>(observableMovies);
-    private MovieSearchService movieSearchService;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
-        movieSearchService = new MovieSearchService(observableMovies); // initialize search service
 
         // initialize UI stuff
         movieListView.setItems(filteredList);   // set data of observable list to list view
@@ -56,7 +54,7 @@ public class HomeController implements Initializable {
 
         searchField.setOnKeyTyped(keyEvent -> {
             String searchTerm = searchField.getText().trim();
-            movieSearchService.searchKeyword(searchTerm, filteredList);
+            MovieSearchService.searchKeyword(searchTerm, filteredList, observableMovies);
         });
 
         // Sort button example:
@@ -70,6 +68,17 @@ public class HomeController implements Initializable {
             }
         });
 
-        resetFilterBtn.setOnAction(actionEvent -> MovieFilterService.resetFilterCriteria(genreComboBox, filteredList, searchField));
+        resetFilterBtn.setOnAction(actionEvent -> resetFilterCriteria(genreComboBox, filteredList, searchField));
+    }
+
+    public static void resetFilterCriteria(JFXComboBox<Genre> genreComboBox,
+                                           FilteredList<Movie> filteredList,
+                                           TextField searchField) {
+        searchField.clear();
+        genreComboBox.setValue(Genre.ALL);
+        if (genreComboBox.getValue() != null) {
+            genreComboBox.getSelectionModel().clearSelection();
+        }
+        MovieFilterService.resetFilterCriteria(filteredList);
     }
 }
