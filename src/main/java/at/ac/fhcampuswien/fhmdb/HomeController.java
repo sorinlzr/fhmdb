@@ -76,7 +76,7 @@ public class HomeController implements Initializable {
         if (genreComboBox.getValue() != null) {
             genreComboBox.getSelectionModel().clearSelection();
         }
-        MovieFilterService.resetFilterCriteria(filteredList);
+        filteredList.setPredicate(movie -> true);
     }
 
     public static void searchForMovie(String searchTerm, Genre genre, FilteredList<Movie> filteredList, List<Movie> movies) {
