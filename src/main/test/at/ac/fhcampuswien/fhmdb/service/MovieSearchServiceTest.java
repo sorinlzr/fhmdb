@@ -1,6 +1,5 @@
-package at.ac.fhcampuswien.fhmdb;
+package at.ac.fhcampuswien.fhmdb.service;
 
-import at.ac.fhcampuswien.fhmdb.service.MovieSearchService;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +8,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class MovieSearchTest {
+class MovieSearchServiceTest {
 
     private final List<Movie> movies = List.of(
             new Movie("Harry Potter", "Guy without a nose has an unhealthy obsession with a teenager"),
