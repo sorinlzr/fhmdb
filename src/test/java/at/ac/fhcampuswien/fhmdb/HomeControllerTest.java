@@ -3,8 +3,6 @@ package at.ac.fhcampuswien.fhmdb;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXListView;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -17,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class SearchAndFilterIntegrationTest {
+class HomeControllerTest {
 
     static Movie movie1;
     static Movie movie2;
@@ -30,7 +28,6 @@ class SearchAndFilterIntegrationTest {
 
     public TextField searchField;
     public JFXComboBox<Genre> genreComboBox;
-    public JFXListView<Movie> movieListView;
     public FilteredList<Movie> filteredList;
 
     @BeforeAll
@@ -68,10 +65,8 @@ class SearchAndFilterIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        Platform.setImplicitExit(false);
         searchField = new TextField();
         genreComboBox = new JFXComboBox<>();
-        movieListView = new JFXListView<>();
         filteredList = new FilteredList<>(observableMovies);
         homeController = new HomeController();
     }
