@@ -1,6 +1,8 @@
 package at.ac.fhcampuswien.fhmdb.service;
 
+import at.ac.fhcampuswien.fhmdb.TestBase;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -10,16 +12,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MovieSearchServiceTest {
 
-    private final List<Movie> movies = List.of(
-            new Movie("Harry Potter", "Guy without a nose has an unhealthy obsession with a teenager"),
-            new Movie("Star Wars: Episode VI", "Father reunites with long lost son, wants him to take over the family business"),
-            new Movie("Star Wars: Episode VII", "Boy runs away from home and joins gang of space pirates, then gets beat up by a girl who collects trash"),
-            new Movie("Titanic", "So there's this huge boat..."),
-            new Movie("Die Hard", "A story about a man who can't seem to die"),
-            new Movie("Tenet", "To be honest, I am still trying to figure out what happened in this movie"),
-            new Movie("Independence Day", "A movie inspired by true events")
-    );
-    MovieSearchService movieSearchService = new MovieSearchService(movies);
+    static MovieSearchService movieSearchService;
+    static List<Movie> movies;
+
+
+    @BeforeAll
+    public static void beforeAll() {
+        TestBase.setUpJavaFX();
+        movies = List.of(
+                new Movie("Harry Potter", "Guy without a nose has an unhealthy obsession with a teenager"),
+                new Movie("Star Wars: Episode VI", "Father reunites with long lost son, wants him to take over the family business"),
+                new Movie("Star Wars: Episode VII", "Boy runs away from home and joins gang of space pirates, then gets beat up by a girl who collects trash"),
+                new Movie("Titanic", "So there's this huge boat..."),
+                new Movie("Die Hard", "A story about a man who can't seem to die"),
+                new Movie("Tenet", "To be honest, I am still trying to figure out what happened in this movie"),
+                new Movie("Independence Day", "A movie inspired by true events")
+        );
+        movieSearchService = new MovieSearchService(movies);
+    }
 
     @Test
     void SearchInMovieTitleWithValidTerm() {
