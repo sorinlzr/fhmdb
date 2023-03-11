@@ -49,13 +49,13 @@ class MovieSearchServiceTest {
     @Test
     void SearchInMovieTitleWithEmptyQuery() {
         List<Movie> result = movieSearchService.searchInMovieTitle("");
-        assertEquals(result.size(), result.size());
+        assertEquals(movies.size(), result.size());
     }
 
     @Test
     void SearchInMovieDescriptionWithEmptyQuery() {
         List<Movie> result = movieSearchService.searchInMovieDescription("");
-        assertEquals(result.size(), result.size());
+        assertEquals(movies.size(), result.size());
     }
 
     @Test

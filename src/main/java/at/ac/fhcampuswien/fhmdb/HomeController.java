@@ -52,9 +52,11 @@ public class HomeController implements Initializable {
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
 
+        genreComboBox.setOnAction(actionEvent -> MovieFilterService.selectSpecificGenre(genreComboBox.getValue(), filteredList));
+
         searchField.setOnKeyTyped(keyEvent -> {
             String searchTerm = searchField.getText().trim();
-            searchKeyword(searchTerm);
+            movieSearchService.searchKeyword(searchTerm, filteredList);
         });
 
         // Sort button example:
@@ -67,19 +69,7 @@ public class HomeController implements Initializable {
                 sortBtn.setText("Sort (asc)");
             }
         });
-    }
 
-    public void resetFilterCriteria() {
-        MovieFilterService.resetFilterCriteria(genreComboBox, filteredList, searchField);
-    }
-
-    public void selectGenre() {
-        MovieFilterService.selectSpecificGenre(genreComboBox.getValue(), filteredList);
-    }
-
-    private void searchKeyword(String searchTerm) {
-        Set<Movie> searchResults = new HashSet<>();
-        searchResults.addAll(movieSearchService.searchForMovie(searchTerm));
-        filteredList.setPredicate(searchResults::contains);
+        resetFilterBtn.setOnAction(actionEvent -> MovieFilterService.resetFilterCriteria(genreComboBox, filteredList, searchField));
     }
 }
