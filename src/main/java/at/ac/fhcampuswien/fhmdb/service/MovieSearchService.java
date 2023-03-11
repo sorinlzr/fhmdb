@@ -1,6 +1,8 @@
 package at.ac.fhcampuswien.fhmdb.service;
 
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import javafx.collections.transformation.FilteredList;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,5 +40,10 @@ public class MovieSearchService {
         searchResult.addAll(this.searchInMovieTitle(searchTerm));
         searchResult.addAll(this.searchInMovieDescription(searchTerm));
         return searchResult;
+    }
+
+    public void searchKeyword(String searchTerm, FilteredList<Movie> filteredList) {
+        Set<Movie> searchResults = new HashSet<>(searchForMovie(searchTerm));
+        filteredList.setPredicate(searchResults::contains);
     }
 }

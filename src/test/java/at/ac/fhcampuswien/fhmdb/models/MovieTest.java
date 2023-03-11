@@ -6,6 +6,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class MovieTest {
 
     @Nested
@@ -15,6 +17,7 @@ public class MovieTest {
         static Movie movie3;
         static Movie movie4;
         static Movie movie5;
+        static Movie movie6;
 
         @BeforeAll
         public static void beforeAll() {
@@ -23,54 +26,52 @@ public class MovieTest {
             movie3 = new Movie("A", "An A class movie!");
             movie4 = new Movie("Z", "A Z class movie!");
             movie5 = new Movie("", "");
+            movie6 = new Movie("Die Hard", "A movie about a hard death.");
         }
 
         @Test
         public void Movie_A_is_smaller_than_Movie_B_if_the_title_is_alphabetically_first() {
-            Assertions.assertTrue(movie1.compareTo(movie4) < 0);
+            assertTrue(movie1.compareTo(movie4) < 0);
 
-            Assertions.assertTrue(movie2.compareTo(movie1) < 0);
-            Assertions.assertTrue(movie2.compareTo(movie4) < 0);
+            assertTrue(movie2.compareTo(movie1) < 0);
+            assertTrue(movie2.compareTo(movie4) < 0);
 
-            Assertions.assertTrue(movie3.compareTo(movie1) < 0);
-            Assertions.assertTrue(movie3.compareTo(movie2) < 0);
-            Assertions.assertTrue(movie3.compareTo(movie4) < 0);
+            assertTrue(movie3.compareTo(movie1) < 0);
+            assertTrue(movie3.compareTo(movie2) < 0);
+            assertTrue(movie3.compareTo(movie4) < 0);
 
-            Assertions.assertTrue(movie5.compareTo(movie1) < 0);
-            Assertions.assertTrue(movie5.compareTo(movie2) < 0);
-            Assertions.assertTrue(movie5.compareTo(movie3) < 0);
-            Assertions.assertTrue(movie5.compareTo(movie4) < 0);
+            assertTrue(movie5.compareTo(movie1) < 0);
+            assertTrue(movie5.compareTo(movie2) < 0);
+            assertTrue(movie5.compareTo(movie3) < 0);
+            assertTrue(movie5.compareTo(movie4) < 0);
         }
 
         @Test
         public void Movie_A_is_greater_than_Movie_B_if_the_title_is_alphabetically_last() {
-            Assertions.assertTrue(movie4.compareTo(movie1) > 0);
+            assertTrue(movie4.compareTo(movie1) > 0);
 
-            Assertions.assertTrue(movie1.compareTo(movie2) > 0);
-            Assertions.assertTrue(movie4.compareTo(movie2) > 0);
+            assertTrue(movie1.compareTo(movie2) > 0);
+            assertTrue(movie4.compareTo(movie2) > 0);
 
-            Assertions.assertTrue(movie1.compareTo(movie3) > 0);
-            Assertions.assertTrue(movie2.compareTo(movie3) > 0);
-            Assertions.assertTrue(movie4.compareTo(movie3) > 0);
+            assertTrue(movie1.compareTo(movie3) > 0);
+            assertTrue(movie2.compareTo(movie3) > 0);
+            assertTrue(movie4.compareTo(movie3) > 0);
 
-            Assertions.assertTrue(movie1.compareTo(movie5) > 0);
-            Assertions.assertTrue(movie2.compareTo(movie5) > 0);
-            Assertions.assertTrue(movie3.compareTo(movie5) > 0);
-            Assertions.assertTrue(movie4.compareTo(movie5) > 0);
+            assertTrue(movie1.compareTo(movie5) > 0);
+            assertTrue(movie2.compareTo(movie5) > 0);
+            assertTrue(movie3.compareTo(movie5) > 0);
+            assertTrue(movie4.compareTo(movie5) > 0);
         }
 
         @Test
         public void Movie_A_is_at_the_same_position_as_Movie_B_if_the_title_is_alphabetically_the_same() {
-            Assertions.assertEquals(0, movie1.compareTo(movie1));
-            Assertions.assertEquals(0, movie2.compareTo(movie2));
-            Assertions.assertEquals(0, movie3.compareTo(movie3));
-            Assertions.assertEquals(0, movie4.compareTo(movie4));
-            Assertions.assertEquals(0, movie5.compareTo(movie5));
+            assertEquals(0, movie1.compareTo(movie6));
+            assertEquals(0, movie6.compareTo(movie1));
         }
 
         @Test
         public void throws_an_exception_if_Movie_B_is_null() {
-            Assertions.assertThrows(IllegalArgumentException.class, () -> movie1.compareTo(null));
+            assertThrows(IllegalArgumentException.class, () -> movie1.compareTo(null));
         }
     }
 
@@ -82,7 +83,7 @@ public class MovieTest {
 
             movies = Movie.initializeMovies();
 
-            Assertions.assertTrue(movies.size() > 0);
+            assertTrue(movies.size() > 0);
         }
 
         @Test
@@ -101,7 +102,7 @@ public class MovieTest {
             description.setAccessible(true);
             genres.setAccessible(true);
 
-            Assertions.assertTrue(movies.stream().anyMatch(movie -> {
+            assertTrue(movies.stream().anyMatch(movie -> {
                 try {
                     return title.get(movie) != null && !title.get(movie).toString().isBlank()
                             && description.get(movie) != null && !description.get(movie).toString().isBlank()

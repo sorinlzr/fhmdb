@@ -1,18 +1,15 @@
 package at.ac.fhcampuswien.fhmdb.service;
 
+import at.ac.fhcampuswien.fhmdb.TestBase;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.TextField;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,7 +29,7 @@ class MovieFilterServiceTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Platform.startup(() -> {});
+        TestBase.setUpJavaFX();
 
         movie1 = new Movie("Die Hard", "A story about a man who can't seem to die");
         movie1.addGenre(Genre.ACTION);
