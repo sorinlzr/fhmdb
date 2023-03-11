@@ -50,11 +50,11 @@ public class HomeController implements Initializable {
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
 
-        genreComboBox.setOnAction(actionEvent -> MovieFilterService.selectSpecificGenre(genreComboBox.getValue(), filteredList));
+        genreComboBox.setOnAction(actionEvent -> searchForMovie(searchField.getText().trim(), genreComboBox.getValue(), filteredList, observableMovies));
 
         searchField.setOnKeyTyped(keyEvent -> {
             String searchTerm = searchField.getText().trim();
-            MovieSearchService.searchKeyword(searchTerm, filteredList, observableMovies);
+            searchForMovie(searchTerm, genreComboBox.getValue(), filteredList, observableMovies);
         });
 
         // Sort button example:
@@ -80,5 +80,19 @@ public class HomeController implements Initializable {
             genreComboBox.getSelectionModel().clearSelection();
         }
         MovieFilterService.resetFilterCriteria(filteredList);
+    }
+
+    public static void searchForMovie(String searchTerm, Genre genre, FilteredList<Movie> filteredList, List<Movie> movies) {
+        Set<Movie> searchResults = new HashSet<>();
+        Set<Movie> keywordSearchResults = MovieSearchService.searchKeyword(searchTerm, movies);
+        List<Movie> genreSearchResults = MovieFilterService.filterMoviesByGenre(genre, movies);
+
+        for (Movie movie : keywordSearchResults) {
+            if (genreSearchResults.contains(movie)) {
+                searchResults.add(movie);
+            }
+        }
+
+        filteredList.setPredicate(searchResults::contains);
     }
 }

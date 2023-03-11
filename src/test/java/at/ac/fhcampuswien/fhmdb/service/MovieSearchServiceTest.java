@@ -158,7 +158,7 @@ class MovieSearchServiceTest {
 
     @Test
     void IfResultAppearsOnlyOnceInTheSetOfResults() {
-        Set<Movie> result = MovieSearchService.searchForMovie("die", movies);
+        Set<Movie> result = MovieSearchService.searchKeyword("die", movies);
         assertEquals(1, result.size());
     }
 }
