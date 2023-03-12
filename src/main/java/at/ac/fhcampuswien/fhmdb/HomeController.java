@@ -38,12 +38,10 @@ public class HomeController implements Initializable {
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     private final FilteredList<Movie> filteredList = new FilteredList<>(observableMovies);
-    private MovieSearchService movieSearchService;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
-        movieSearchService = new MovieSearchService(observableMovies); // initialize search service
 
         // initialize UI stuff
         movieListView.setItems(filteredList);   // set data of observable list to list view
@@ -52,12 +50,9 @@ public class HomeController implements Initializable {
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
 
-        genreComboBox.setOnAction(actionEvent -> MovieFilterService.selectSpecificGenre(genreComboBox.getValue(), filteredList));
+        genreComboBox.setOnAction(actionEvent -> searchForMovie(searchField.getText().trim(), genreComboBox.getValue(), filteredList, observableMovies));
 
-        searchField.setOnKeyTyped(keyEvent -> {
-            String searchTerm = searchField.getText().trim();
-            movieSearchService.searchKeyword(searchTerm, filteredList);
-        });
+        searchField.setOnKeyTyped(keyEvent -> searchForMovie(searchField.getText().trim(), genreComboBox.getValue(), filteredList, observableMovies));
 
         // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
@@ -70,6 +65,31 @@ public class HomeController implements Initializable {
             }
         });
 
-        resetFilterBtn.setOnAction(actionEvent -> MovieFilterService.resetFilterCriteria(genreComboBox, filteredList, searchField));
+        resetFilterBtn.setOnAction(actionEvent -> resetFilterCriteria(genreComboBox, filteredList, searchField));
+    }
+
+    public static void resetFilterCriteria(JFXComboBox<Genre> genreComboBox,
+                                           FilteredList<Movie> filteredList,
+                                           TextField searchField) {
+        searchField.clear();
+        genreComboBox.setValue(Genre.ALL);
+        if (genreComboBox.getValue() != null) {
+            genreComboBox.getSelectionModel().clearSelection();
+        }
+        filteredList.setPredicate(movie -> true);
+    }
+
+    public static void searchForMovie(String searchTerm, Genre genre, FilteredList<Movie> filteredList, List<Movie> movies) {
+        Set<Movie> searchResults = new HashSet<>();
+        Set<Movie> keywordSearchResults = MovieSearchService.searchKeyword(searchTerm, movies);
+        List<Movie> genreSearchResults = MovieFilterService.filterMoviesByGenre(genre, movies);
+
+        for (Movie movie : keywordSearchResults) {
+            if (genreSearchResults.contains(movie)) {
+                searchResults.add(movie);
+            }
+        }
+
+        filteredList.setPredicate(searchResults::contains);
     }
 }

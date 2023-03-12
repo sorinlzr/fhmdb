@@ -2,31 +2,23 @@ package at.ac.fhcampuswien.fhmdb.service;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import com.jfoenix.controls.JFXComboBox;
-import javafx.collections.transformation.FilteredList;
-import javafx.scene.control.TextField;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MovieFilterService {
 
-    public static void resetFilterCriteria(JFXComboBox<Genre> genreComboBox,
-                                           FilteredList<Movie> filteredList,
-                                           TextField searchField) {
-        searchField.clear();
-        genreComboBox.setValue(Genre.ALL);
-        if (genreComboBox.getValue() != null) {
-            genreComboBox.getSelectionModel().clearSelection();
+    public static List<Movie> filterMoviesByGenre(Genre genre, List<Movie> movies) {
+        List<Movie> filteredMovies = new ArrayList<>();
+        if (Genre.ALL.equals(genre) || genre == null) {
+            return movies;
         }
-        filteredList.setPredicate(movie -> true);
-    }
 
-    public static void selectSpecificGenre(Genre genre,
-                                           FilteredList<Movie> filteredList) {
-        filteredList.setPredicate(movie -> {
-            if (Genre.ALL.equals(genre)) {
-                return true;
-            } else {
-                return movie.getGenres().contains(genre);
+        for (Movie movie : movies) {
+            if (movie.getGenres().contains(genre)) {
+                filteredMovies.add(movie);
             }
-        });
+        }
+        return filteredMovies;
     }
 }
