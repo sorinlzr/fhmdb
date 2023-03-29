@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.models.RatingOption;
 import at.ac.fhcampuswien.fhmdb.service.MovieFilterService;
 import at.ac.fhcampuswien.fhmdb.service.MovieSearchService;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
@@ -17,10 +18,15 @@ import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class HomeController implements Initializable {
     @FXML
     public JFXButton resetFilterBtn;
+
+    @FXML
+    public JFXButton searchBtn;
 
     @FXML
     public TextField searchField;
@@ -32,29 +38,37 @@ public class HomeController implements Initializable {
     public JFXComboBox<Genre> genreComboBox;
 
     @FXML
+    public JFXComboBox<Integer> releaseYearPicker;
+
+    @FXML
+    public JFXComboBox<RatingOption> ratingComboBox;
+
+    @FXML
     public JFXButton sortBtn;
 
     public List<Movie> allMovies = Movie.initializeMovies();
 
-    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
     private final FilteredList<Movie> filteredList = new FilteredList<>(observableMovies);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        observableMovies.addAll(allMovies);         // add dummy data to observable list
+        observableMovies.addAll(allMovies);
 
-        // initialize UI stuff
-        movieListView.setItems(filteredList);   // set data of observable list to list view
-        movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
+        movieListView.setItems(filteredList);
+        movieListView.setCellFactory(movieListView -> new MovieCell());
 
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
 
-        genreComboBox.setOnAction(actionEvent -> searchForMovie(searchField.getText().trim(), genreComboBox.getValue(), filteredList, observableMovies));
+        releaseYearPicker.setPromptText("Filter by Release Year");
+        releaseYearPicker.getItems().addAll(getYears());
 
-        searchField.setOnKeyTyped(keyEvent -> searchForMovie(searchField.getText().trim(), genreComboBox.getValue(), filteredList, observableMovies));
+        ratingComboBox.setPromptText("Filter by Rating");
+        ratingComboBox.getItems().addAll(RatingOption.values());
 
-        // Sort button example:
+        searchBtn.setOnAction(actionEvent -> searchForMovie(searchField.getText().trim(), genreComboBox.getValue(), filteredList, observableMovies));
+
         sortBtn.setOnAction(actionEvent -> {
             if(sortBtn.getText().equals("Sort (asc)")) {
                 observableMovies.sort(Comparator.naturalOrder());
@@ -91,5 +105,12 @@ public class HomeController implements Initializable {
         }
 
         filteredList.setPredicate(searchResults::contains);
+    }
+
+    private List<Integer> getYears() {
+        int currentYear = java.time.LocalDate.now().getYear();
+        return IntStream.rangeClosed(0, 80)
+                .mapToObj(i -> currentYear - i)
+                .collect(Collectors.toList());
     }
 }
