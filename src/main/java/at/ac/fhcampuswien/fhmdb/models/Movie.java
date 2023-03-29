@@ -3,34 +3,33 @@ package at.ac.fhcampuswien.fhmdb.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Movie implements Comparable<Movie>{
+public class Movie implements Comparable<Movie> {
+    private String id;
+    private int releaseYear;
+    private String imgUrl;
+    private int lengthInMinutes;
+    private List<String> directors;
+    private List<String> writers;
+    private List<String> mainCast;
+    private double rating;
     private String title;
     private String description;
-    private List<Genre> genres;
+    private final List<Genre> genres;
+
+    public Movie() {
+        this.genres = new ArrayList<>();
+        this.directors = new ArrayList<>();
+        this.writers = new ArrayList<>();
+        this.mainCast = new ArrayList<>();
+    }
 
     public Movie(String title, String description) {
+        this();
         this.title = title;
         this.description = description;
-        this.genres = new ArrayList<>();
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public List<Genre> getGenres() {
-        return genres;
-    }
-
-    public void addGenre(Genre genre) {
-        genres.add(genre);
-    }
-
-    public static List<Movie> initializeMovies(){
+    public static List<Movie> initializeMovies() {
         List<Movie> movies = new ArrayList<>();
         Movie movie = new Movie("Die Hard", "A story about a man who can't seem to die");
         movie.addGenre(Genre.ACTION);
@@ -125,5 +124,95 @@ public class Movie implements Comparable<Movie>{
         if (movie == null) throw new IllegalArgumentException("Movie cannot be null!");
 
         return this.title.compareTo(movie.title);
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public void addGenre(Genre genre) {
+        genres.add(genre);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
+    public int getReleaseYear() {
+        return releaseYear;
+    }
+
+    public void setReleaseYear(int releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public int getLengthInMinutes() {
+        return lengthInMinutes;
+    }
+
+    public void setLengthInMinutes(int lengthInMinutes) {
+        this.lengthInMinutes = lengthInMinutes;
+    }
+
+    public List<String> getDirectors() {
+        return directors;
+    }
+
+    public void setDirectors(List<String> directors) {
+        this.directors = directors;
+    }
+
+    public List<String> getWriters() {
+        return writers;
+    }
+
+    public void setWriters(List<String> writers) {
+        this.writers = writers;
+    }
+
+    public List<String> getMainCast() {
+        return mainCast;
+    }
+
+    public void setMainCast(List<String> mainCast) {
+        this.mainCast = mainCast;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 }
