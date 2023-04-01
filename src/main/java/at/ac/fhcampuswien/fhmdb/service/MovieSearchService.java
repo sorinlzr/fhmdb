@@ -1,38 +1,36 @@
 package at.ac.fhcampuswien.fhmdb.service;
 
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import javafx.collections.transformation.FilteredList;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.function.Predicate;
 
 public class MovieSearchService {
 
-    public static List<Movie> searchInMovieTitle(String movieTitle, List<Movie> movies) {
-        List<Movie> searchResult = new ArrayList<>();
-        for (Movie movie : movies) {
-            if (movie.getTitle().toLowerCase().contains(movieTitle.trim().toLowerCase())) {
-                searchResult.add(movie);
-            }
-        }
-        return searchResult;
+    private MovieSearchService() {
+        throw new IllegalStateException("Utility class");
     }
 
-    public static List<Movie> searchInMovieDescription(String movieDescription, List<Movie> movies) {
-        List<Movie> searchResult = new ArrayList<>();
-        for (Movie movie : movies) {
-            if (movie.getDescription().toLowerCase().contains(movieDescription.trim().toLowerCase())) {
-                searchResult.add(movie);
-            }
-        }
-        return searchResult;
+    public static void searchInMovieTitleAndInMovieDescription(String searchTerm, FilteredList<Movie> filteredMovies) {
+        Predicate<Movie> combinedPredicate = getSearchInMovieTitlePredicate(searchTerm)
+                .or(getSearchInMovieDescriptionPredicate(searchTerm));
+
+        filteredMovies.setPredicate(combinedPredicate.and(filteredMovies.getPredicate()));
     }
 
-    public static Set<Movie> searchKeyword(String searchTerm, List<Movie> movies) {
-        Set<Movie> searchResult = new HashSet<>();
-        searchResult.addAll(searchInMovieTitle(searchTerm, movies));
-        searchResult.addAll(searchInMovieDescription(searchTerm, movies));
-        return searchResult;
+    public static void searchInMovieTitle(String movieTitle, FilteredList<Movie> filteredMovies) {
+        filteredMovies.setPredicate(getSearchInMovieTitlePredicate(movieTitle).and(filteredMovies.getPredicate()));
+    }
+
+    private static Predicate<Movie> getSearchInMovieTitlePredicate(String movieTitle) {
+        return movie -> movie.getTitle().toLowerCase().contains(movieTitle.trim().toLowerCase());
+    }
+
+    public static void searchInMovieDescription(String movieDescription, FilteredList<Movie> filteredMovies) {
+        filteredMovies.setPredicate(getSearchInMovieDescriptionPredicate(movieDescription).and(filteredMovies.getPredicate()));
+    }
+
+    private static Predicate<Movie> getSearchInMovieDescriptionPredicate(String movieDescription) {
+        return movie -> movie.getDescription().toLowerCase().contains(movieDescription.trim().toLowerCase());
     }
 }

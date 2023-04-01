@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.models.RatingOption;
+import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
 import at.ac.fhcampuswien.fhmdb.service.MovieFilterService;
 import at.ac.fhcampuswien.fhmdb.service.MovieSearchService;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
@@ -16,9 +17,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class HomeController implements Initializable {
@@ -46,31 +47,48 @@ public class HomeController implements Initializable {
     @FXML
     public JFXButton sortBtn;
 
-    public List<Movie> allMovies = Movie.initializeMovies();
-
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
-    private final FilteredList<Movie> filteredList = new FilteredList<>(observableMovies);
+
+    private final FilteredList<Movie> filteredMovies = new FilteredList<>(observableMovies);
+
+    private final List<Integer> releaseYears;
+
+    public HomeController() {
+        int currentYear = java.time.LocalDate.now().getYear();
+
+        releaseYears = IntStream.rangeClosed(0, 80)
+                .mapToObj(i -> currentYear - i)
+                .toList();
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        List<Movie> allMovies;
+
+        try {
+            allMovies = MovieAPIService.getMovies();
+        } catch (IOException e) {
+            allMovies = new ArrayList<>();
+        }
+
         observableMovies.addAll(allMovies);
 
-        movieListView.setItems(filteredList);
-        movieListView.setCellFactory(movieListView -> new MovieCell());
+        movieListView.setItems(filteredMovies);
+        movieListView.setCellFactory(e -> new MovieCell());
 
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
 
         releaseYearPicker.setPromptText("Filter by Release Year");
-        releaseYearPicker.getItems().addAll(getYears());
+        releaseYearPicker.getItems().addAll(releaseYears);
 
         ratingComboBox.setPromptText("Filter by Rating");
         ratingComboBox.getItems().addAll(RatingOption.values());
 
-        searchBtn.setOnAction(actionEvent -> searchForMovie(searchField.getText().trim(), genreComboBox.getValue(), filteredList, observableMovies));
+        searchBtn.setOnAction(actionEvent -> searchAndFilterMovies());
 
         sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
+            if (sortBtn.getText().equals("Sort (asc)")) {
                 observableMovies.sort(Comparator.naturalOrder());
                 sortBtn.setText("Sort (desc)");
             } else {
@@ -79,38 +97,45 @@ public class HomeController implements Initializable {
             }
         });
 
-        resetFilterBtn.setOnAction(actionEvent -> resetFilterCriteria(genreComboBox, filteredList, searchField));
+        resetFilterBtn.setOnAction(actionEvent -> resetSearchAndFilterCriteria());
     }
 
-    public static void resetFilterCriteria(JFXComboBox<Genre> genreComboBox,
-                                           FilteredList<Movie> filteredList,
-                                           TextField searchField) {
+    public void searchAndFilterMovies() {
+        filteredMovies.setPredicate(movie -> true);
+
+        String searchQuery = searchField.getText().trim();
+        if (!searchQuery.isEmpty()) MovieSearchService.searchInMovieTitleAndInMovieDescription(searchQuery, filteredMovies);
+
+        Genre genre = genreComboBox.getValue();
+        if (genre != null && genre != Genre.ALL) MovieFilterService.filterMoviesByGenre(genre, filteredMovies);
+    }
+
+    public void resetSearchAndFilterCriteria() {
         searchField.clear();
+
         genreComboBox.setValue(Genre.ALL);
-        if (genreComboBox.getValue() != null) {
-            genreComboBox.getSelectionModel().clearSelection();
-        }
-        filteredList.setPredicate(movie -> true);
+        genreComboBox.getSelectionModel().clearSelection();
+
+        filteredMovies.setPredicate(movie -> true);
     }
 
-    public static void searchForMovie(String searchTerm, Genre genre, FilteredList<Movie> filteredList, List<Movie> movies) {
-        Set<Movie> searchResults = new HashSet<>();
-        Set<Movie> keywordSearchResults = MovieSearchService.searchKeyword(searchTerm, movies);
-        List<Movie> genreSearchResults = MovieFilterService.filterMoviesByGenre(genre, movies);
-
-        for (Movie movie : keywordSearchResults) {
-            if (genreSearchResults.contains(movie)) {
-                searchResults.add(movie);
-            }
-        }
-
-        filteredList.setPredicate(searchResults::contains);
+    //TODO move to different class??
+    public String getMostPopularActor(List<Movie> movies) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    private List<Integer> getYears() {
-        int currentYear = java.time.LocalDate.now().getYear();
-        return IntStream.rangeClosed(0, 80)
-                .mapToObj(i -> currentYear - i)
-                .collect(Collectors.toList());
+    //TODO move to different class??
+    public int getLongestMovieTitle(List<Movie> movies) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    //TODO move to different class??
+    public long countMoviesFrom(List<Movie> movies, String director) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    //TODO move to different class??
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

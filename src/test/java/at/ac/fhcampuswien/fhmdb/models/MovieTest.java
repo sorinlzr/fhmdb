@@ -21,12 +21,12 @@ public class MovieTest {
 
         @BeforeAll
         public static void beforeAll() {
-            movie1 = new Movie("Die Hard", "A movie about a hard death.");
-            movie2 = new Movie("Die Easy", "A movie about an easy death.");
-            movie3 = new Movie("A", "An A class movie!");
-            movie4 = new Movie("Z", "A Z class movie!");
-            movie5 = new Movie("", "");
-            movie6 = new Movie("Die Hard", "A movie about a hard death.");
+            movie1 = new Movie("1","Die Hard", "A movie about a hard death.");
+            movie2 = new Movie("2","Die Easy", "A movie about an easy death.");
+            movie3 = new Movie("3","A", "An A class movie!");
+            movie4 = new Movie("4","Z", "A Z class movie!");
+            movie5 = new Movie("5","", "");
+            movie6 = new Movie("6","Die Hard", "A movie about a hard death.");
         }
 
         @Test
@@ -72,46 +72,6 @@ public class MovieTest {
         @Test
         public void throws_an_exception_if_Movie_B_is_null() {
             assertThrows(IllegalArgumentException.class, () -> movie1.compareTo(null));
-        }
-    }
-
-    @Nested
-    public class InitializeMovies {
-        @Test
-        public void returns_a_list_of_movies_with_more_than_0_movies() {
-            List<Movie> movies;
-
-            movies = Movie.initializeMovies();
-
-            assertTrue(movies.size() > 0);
-        }
-
-        @Test
-        public void contains_a_movie_with_all_properties_filled_out() throws NoSuchFieldException {
-            List<Movie> movies;
-            List<Genre> genresValues = new ArrayList<>();
-
-            Field title = Movie.class.getDeclaredField("title");
-            Field description = Movie.class.getDeclaredField("description");
-            Field genres = Movie.class.getDeclaredField("genres");
-
-            movies = Movie.initializeMovies();
-            genresValues.add(Genre.ALL);
-
-            title.setAccessible(true);
-            description.setAccessible(true);
-            genres.setAccessible(true);
-
-            assertTrue(movies.stream().anyMatch(movie -> {
-                try {
-                    return title.get(movie) != null && !title.get(movie).toString().isBlank()
-                            && description.get(movie) != null && !description.get(movie).toString().isBlank()
-                            && genres.get(movie) != null && !genres.get(movie).equals(genresValues);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-                return false;
-            }));
         }
     }
 }

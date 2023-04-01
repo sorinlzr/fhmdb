@@ -2,23 +2,20 @@ package at.ac.fhcampuswien.fhmdb.service;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-
-import java.util.ArrayList;
-import java.util.List;
+import javafx.collections.transformation.FilteredList;
+import java.util.function.Predicate;
 
 public class MovieFilterService {
 
-    public static List<Movie> filterMoviesByGenre(Genre genre, List<Movie> movies) {
-        List<Movie> filteredMovies = new ArrayList<>();
-        if (Genre.ALL.equals(genre) || genre == null) {
-            return movies;
-        }
+    private MovieFilterService() {
+        throw new IllegalStateException("Utility class");
+    }
 
-        for (Movie movie : movies) {
-            if (movie.getGenres().contains(genre)) {
-                filteredMovies.add(movie);
-            }
-        }
-        return filteredMovies;
+    public static void filterMoviesByGenre(Genre genre, FilteredList<Movie> filteredMovies) {
+        filteredMovies.setPredicate(getFilterMoviesByGenrePredicate(genre).and(filteredMovies.getPredicate()));
+    }
+
+    private static Predicate<Movie> getFilterMoviesByGenrePredicate(Genre genre) {
+        return movie -> movie.getGenres().contains(genre);
     }
 }
