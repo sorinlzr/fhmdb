@@ -13,12 +13,7 @@ import javafx.scene.control.TextField;
 import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MovieFilterServiceTest {
     private static TextField searchField;
@@ -91,32 +86,6 @@ class MovieFilterServiceTest {
         filteredMovies.set(homeController, MovieFilterServiceTest.filteredMovies);
     }
 
-    //TODO: Implement tests for the following methods
-    //    @Nested
-//    class SelectGenre{
-//        Genre action = Genre.ACTION;
-//
-//        @Test
-//        void selectionIsEmptyByDefault() {
-//            assertTrue(genreComboBox.getSelectionModel().isEmpty());
-//        }
-//
-//        @Test
-//        void observableAndFilteredListContainAllMoviesByDefault() {
-//            assertEquals(5, observableMovies.size());
-//            assertEquals(5, filteredMovies.size());
-//        }
-//
-//        @Test
-//        void shouldSelectOnlySpecificGenre() {
-//            genreComboBox.setValue(action);
-//            assertEquals(5, observableMovies.size());
-//
-//            MovieFilterService.filterMoviesByGenre(genreComboBox.getValue(), filteredMovies);
-//            assertEquals(3, filteredMovies.size());
-//        }
-//    }
-//
     @Nested
     class FilterMoviesByGenre {
         @Test
