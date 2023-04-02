@@ -2,8 +2,6 @@ package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.models.RatingOption;
 import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
-import at.ac.fhcampuswien.fhmdb.service.MovieFilterService;
-import at.ac.fhcampuswien.fhmdb.service.MovieSearchService;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
@@ -130,25 +128,5 @@ public class HomeController implements Initializable {
         }
 
         observableMovies.addAll(moviesWithFilter);
-    }
-
-    private void searchAndFilterMovies() {
-        filteredMovies.setPredicate(movie -> true);
-
-        String searchQuery = searchField.getText().trim();
-        if (!searchQuery.isEmpty())
-            MovieSearchService.searchInMovieTitleAndInMovieDescription(searchQuery, filteredMovies);
-
-        Genre genre = genreComboBox.getValue();
-        if (genre != null && genre != Genre.ALL) MovieFilterService.filterMoviesByGenre(genre, filteredMovies);
-    }
-
-    private void resetSearchAndFilterCriteria() {
-        searchField.clear();
-
-        genreComboBox.setValue(Genre.ALL);
-        genreComboBox.getSelectionModel().clearSelection();
-
-        filteredMovies.setPredicate(movie -> true);
     }
 }
