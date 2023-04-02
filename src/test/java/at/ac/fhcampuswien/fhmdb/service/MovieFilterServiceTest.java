@@ -1,28 +1,18 @@
 package at.ac.fhcampuswien.fhmdb.service;
 
-import at.ac.fhcampuswien.fhmdb.HomeController;
 import at.ac.fhcampuswien.fhmdb.TestBase;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.scene.control.TextField;
 import org.junit.jupiter.api.*;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 class MovieFilterServiceTest {
-    private static TextField searchField;
-    private static JFXComboBox<Genre> genreComboBox;
-    private static JFXComboBox<Integer> releaseYearPicker;
-    private static JFXComboBox<Integer> ratingComboBox;
-    private static JFXListView<Movie> movieListView;
     private static FilteredList<Movie> filteredMovies;
-    private static HomeController homeController;
 
     @BeforeAll
     public static void beforeAll() {
@@ -70,27 +60,50 @@ class MovieFilterServiceTest {
     }
 
     @BeforeEach
-    void setUp() throws NoSuchFieldException, IllegalAccessException {
-        homeController = new HomeController();
-
-        MovieFilterServiceTest.searchField = new TextField();
-        MovieFilterServiceTest.genreComboBox = new JFXComboBox<>();
-        MovieFilterServiceTest.releaseYearPicker = new JFXComboBox<>();
-        MovieFilterServiceTest.ratingComboBox = new JFXComboBox<>();
-        MovieFilterServiceTest.movieListView = new JFXListView<>();
-
-        MovieFilterServiceTest.filteredMovies.setPredicate(null);
-
-        Field filteredMovies = HomeController.class.getDeclaredField("filteredMovies");
-        filteredMovies.setAccessible(true);
-        filteredMovies.set(homeController, MovieFilterServiceTest.filteredMovies);
+    void beforeEach() {
+        filteredMovies.setPredicate(null);
     }
 
     @Nested
     class FilterMoviesByGenre {
+
         @Test
-        void ImplementSomeTestsHere() {
-            throw new UnsupportedOperationException("Implement some tests here");
+        void Filtered_movies_contain_only_action_movies_when_the_filter_is_set_to_action() {
+            // Arrange
+            Genre genre = Genre.ACTION;
+
+            // Act
+            MovieFilterService.filterMoviesByGenre(genre, filteredMovies);
+
+            // Assert
+            Assertions.assertEquals(3, filteredMovies.size());
+        }
+
+        @Test
+        void Filtered_movies_contain_no_movies_when_the_filter_does_not_match_any_movie() {
+            // Arrange
+            Genre genre = Genre.HORROR;
+
+            // Act
+            MovieFilterService.filterMoviesByGenre(genre, filteredMovies);
+
+            // Assert
+            Assertions.assertEquals(0, filteredMovies.size());
+        }
+
+        @Test
+        void Filters_movies_when_there_is_another_filter_set() {
+            // Arrange
+            Predicate<? super Movie> existingPredicate = movie -> movie.getDescription().contains("story");
+            filteredMovies.setPredicate(existingPredicate);
+
+            Genre genre = Genre.FANTASY;
+
+            // Act
+            MovieFilterService.filterMoviesByGenre(genre, filteredMovies);
+
+            // Assert
+            Assertions.assertEquals(1, filteredMovies.size());
         }
     }
 }

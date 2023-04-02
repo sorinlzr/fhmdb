@@ -10,15 +10,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MovieSearchServiceTest {
 
     static ObservableList<Movie> observableMovies;
-    static FilteredList<Movie> filteredList;
+    static FilteredList<Movie> filteredMovies;
 
     @BeforeAll
     static void beforeAll() {
@@ -35,12 +32,12 @@ class MovieSearchServiceTest {
                 new Movie("7", "Independence Day", "A movie inspired by true events")
         );
 
-        filteredList = new FilteredList<>(observableMovies);
+        filteredMovies = new FilteredList<>(observableMovies);
     }
 
     @BeforeEach
     void beforeEach() {
-        filteredList.setPredicate(null);
+        filteredMovies.setPredicate(null);
     }
 
     @Nested
@@ -48,74 +45,74 @@ class MovieSearchServiceTest {
         //TODO test with and without existing predicate.
         @Test
         void SearchInMovieTitleWithValidTerm() {
-            MovieSearchService.searchInMovieTitle("Harry Potter", filteredList);
-            assertEquals(1, filteredList.size());
+            MovieSearchService.searchInMovieTitle("Harry Potter", filteredMovies);
+            assertEquals(1, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieTitleWithMultipleTerms() {
-            MovieSearchService.searchInMovieTitle("Star Wars: Episode", filteredList);
-            assertEquals(2, filteredList.size());
+            MovieSearchService.searchInMovieTitle("Star Wars: Episode", filteredMovies);
+            assertEquals(2, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieTitleWithEmptyQuery() {
-            MovieSearchService.searchInMovieTitle("", filteredList);
-            assertEquals(observableMovies.size(), filteredList.size());
+            MovieSearchService.searchInMovieTitle("", filteredMovies);
+            assertEquals(observableMovies.size(), filteredMovies.size());
         }
 
         @Test
         void SearchInMovieTitleWithInvalidTerm() {
-            MovieSearchService.searchInMovieTitle("Xyz", filteredList);
-            assertEquals(0, filteredList.size());
+            MovieSearchService.searchInMovieTitle("Xyz", filteredMovies);
+            assertEquals(0, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieTitleWithSpecialChars() {
-            MovieSearchService.searchInMovieTitle("$#@!%", filteredList);
-            assertEquals(0, filteredList.size());
+            MovieSearchService.searchInMovieTitle("$#@!%", filteredMovies);
+            assertEquals(0, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieTitleWithLeadingTrailingSpaces() {
-            MovieSearchService.searchInMovieTitle("  Titanic  ", filteredList);
-            assertEquals(1, filteredList.size());
+            MovieSearchService.searchInMovieTitle("  Titanic  ", filteredMovies);
+            assertEquals(1, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieTitleWithMultipleResults() {
-            MovieSearchService.searchInMovieTitle("Star Wars", filteredList);
-            assertEquals(2, filteredList.size());
+            MovieSearchService.searchInMovieTitle("Star Wars", filteredMovies);
+            assertEquals(2, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieTitleWithMisspelledQuery() {
-            MovieSearchService.searchInMovieTitle("Harri Pottr", filteredList);
-            assertEquals(0, filteredList.size());
+            MovieSearchService.searchInMovieTitle("Harri Pottr", filteredMovies);
+            assertEquals(0, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieTitleWithUppercaseQuery() {
-            MovieSearchService.searchInMovieTitle("TITANIC", filteredList);
-            assertEquals(1, filteredList.size());
+            MovieSearchService.searchInMovieTitle("TITANIC", filteredMovies);
+            assertEquals(1, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieTitleWithLowercaseQuery() {
-            MovieSearchService.searchInMovieTitle("titanic", filteredList);
-            assertEquals(1, filteredList.size());
+            MovieSearchService.searchInMovieTitle("titanic", filteredMovies);
+            assertEquals(1, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieTitleWithMixedCaseQuery() {
-            MovieSearchService.searchInMovieTitle("HaRRy pOTTer", filteredList);
-            assertEquals(1, filteredList.size());
+            MovieSearchService.searchInMovieTitle("HaRRy pOTTer", filteredMovies);
+            assertEquals(1, filteredMovies.size());
         }
 
         @Test
         void IfResultAppearsOnlyOnceInTheSetOfResults() {
-            MovieSearchService.searchInMovieTitleAndInMovieDescription("die", filteredList);
-            assertEquals(1, filteredList.size());
+            MovieSearchService.searchInMovieTitleAndInMovieDescription("die", filteredMovies);
+            assertEquals(1, filteredMovies.size());
         }
     }
 
@@ -124,64 +121,64 @@ class MovieSearchServiceTest {
         //TODO test with and without existing predicate.
         @Test
         void SearchInMovieDescriptionWithValidTerm() {
-            MovieSearchService.searchInMovieDescription("nose", filteredList);
-            assertEquals(1, filteredList.size());
+            MovieSearchService.searchInMovieDescription("nose", filteredMovies);
+            assertEquals(1, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieDescriptionWithMultipleTerms() {
-            MovieSearchService.searchInMovieDescription("without a nose", filteredList);
-            assertEquals(1, filteredList.size());
+            MovieSearchService.searchInMovieDescription("without a nose", filteredMovies);
+            assertEquals(1, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieDescriptionWithEmptyQuery() {
-            MovieSearchService.searchInMovieDescription("", filteredList);
-            assertEquals(observableMovies.size(), filteredList.size());
+            MovieSearchService.searchInMovieDescription("", filteredMovies);
+            assertEquals(observableMovies.size(), filteredMovies.size());
         }
 
 
         @Test
         void SearchInMovieDescriptionWithInvalidTerm() {
-            MovieSearchService.searchInMovieDescription("Xyz", filteredList);
-            assertEquals(0, filteredList.size());
+            MovieSearchService.searchInMovieDescription("Xyz", filteredMovies);
+            assertEquals(0, filteredMovies.size());
         }
 
 
         @Test
         void SearchInMovieDescriptionWithSpecialChars() {
-            MovieSearchService.searchInMovieDescription("$#@!%", filteredList);
-            assertEquals(0, filteredList.size());
+            MovieSearchService.searchInMovieDescription("$#@!%", filteredMovies);
+            assertEquals(0, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieDescriptionWithLeadingTrailingSpaces() {
-            MovieSearchService.searchInMovieDescription("  nose  ", filteredList);
-            assertEquals(1, filteredList.size());
+            MovieSearchService.searchInMovieDescription("  nose  ", filteredMovies);
+            assertEquals(1, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieDescriptionWithMultipleResults() {
-            MovieSearchService.searchInMovieDescription("movie", filteredList);
-            assertEquals(2, filteredList.size());
+            MovieSearchService.searchInMovieDescription("movie", filteredMovies);
+            assertEquals(2, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieDescriptionWithMisspelledQuery() {
-            MovieSearchService.searchInMovieDescription("bqat", filteredList);
-            assertEquals(0, filteredList.size());
+            MovieSearchService.searchInMovieDescription("bqat", filteredMovies);
+            assertEquals(0, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieDescriptionWithUppercaseQuery() {
-            MovieSearchService.searchInMovieDescription("BOAT", filteredList);
-            assertEquals(1, filteredList.size());
+            MovieSearchService.searchInMovieDescription("BOAT", filteredMovies);
+            assertEquals(1, filteredMovies.size());
         }
 
         @Test
         void SearchInMovieDescriptionWithMixedCaseQuery() {
-            MovieSearchService.searchInMovieDescription("bOaT", filteredList);
-            assertEquals(1, filteredList.size());
+            MovieSearchService.searchInMovieDescription("bOaT", filteredMovies);
+            assertEquals(1, filteredMovies.size());
         }
     }
 
