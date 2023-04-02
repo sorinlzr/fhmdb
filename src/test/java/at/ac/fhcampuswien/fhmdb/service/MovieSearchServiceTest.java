@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.fhmdb.service;
 
 import at.ac.fhcampuswien.fhmdb.TestBase;
+import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,6 +10,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,16 +25,20 @@ class MovieSearchServiceTest {
     static void beforeAll() {
         TestBase.setUpJavaFX();
 
+        Movie movie1 = new Movie("1", "Harry Potter", "Guy without a nose has an unhealthy obsession with a teenager");
+        Movie movie2 = new Movie("2", "Star Wars: Episode VI", "Father reunites with long lost son, wants him to take over the family business");
+        Movie movie3 = new Movie("3", "Star Wars: Episode VII", "Boy runs away from home and joins gang of space pirates, then gets beat up by a girl who collects trash");
+        Movie movie4 = new Movie("4", "Titanic", "So there's this huge boat. One day...");
+        movie4.setGenres(new ArrayList<>() {{
+            add(Genre.ACTION);
+        }});
+
+        Movie movie5 = new Movie("5", "Die Hard", "A story about a man who can't seem to die");
+        Movie movie6 = new Movie("6", "Tenet", "To be honest, I am still trying to figure out what happened in this movie");
+        Movie movie7 = new Movie("7", "Independence Day", "A movie inspired by true events");
+
         observableMovies = FXCollections.observableArrayList();
-        observableMovies.addAll(
-                new Movie("1", "Harry Potter", "Guy without a nose has an unhealthy obsession with a teenager"),
-                new Movie("2", "Star Wars: Episode VI", "Father reunites with long lost son, wants him to take over the family business"),
-                new Movie("3", "Star Wars: Episode VII", "Boy runs away from home and joins gang of space pirates, then gets beat up by a girl who collects trash"),
-                new Movie("4", "Titanic", "So there's this huge boat..."),
-                new Movie("5", "Die Hard", "A story about a man who can't seem to die"),
-                new Movie("6", "Tenet", "To be honest, I am still trying to figure out what happened in this movie"),
-                new Movie("7", "Independence Day", "A movie inspired by true events")
-        );
+        observableMovies.addAll(movie1, movie2, movie3, movie4, movie5, movie6, movie7);
 
         filteredMovies = new FilteredList<>(observableMovies);
     }
@@ -183,12 +191,45 @@ class MovieSearchServiceTest {
     }
 
     @Nested
-    class SearchInMovieTitleAndInMovieDescription{
-        //TODO implement tests for searchInMovieTitleAndInMovieDescription
-        //TODO test with and without existing predicate.
+    class SearchInMovieTitleAndInMovieDescription {
         @Test
-        void ImplementSomeTestsHere() {
-            throw new UnsupportedOperationException("Implement some tests here");
+        void Finds_movies_with_the_same_keyword_in_title_and_description() {
+            //Act
+            MovieSearchService.searchInMovieTitleAndInMovieDescription("day", filteredMovies);
+
+            //Assert
+            assertEquals(2, filteredMovies.size());
+        }
+
+        @Test
+        void Finds_movies_with_the_keyword_in_title() {
+            //Act
+            MovieSearchService.searchInMovieTitleAndInMovieDescription("Die Hard", filteredMovies);
+
+            //Assert
+            assertEquals(1, filteredMovies.size());
+        }
+
+        @Test
+        void Finds_movies_with_the_keyword_in_description() {
+            //Act
+            MovieSearchService.searchInMovieTitleAndInMovieDescription("events", filteredMovies);
+
+            //Assert
+            assertEquals(1, filteredMovies.size());
+        }
+
+        @Test
+        void Finds_movies_with_the_keyword_in_title_and_description_when_existing_filters_are_set() {
+            //Assert
+            Predicate<Movie> existingPredicate = movie -> movie.getGenres().contains(Genre.ACTION);
+            filteredMovies.setPredicate(existingPredicate);
+
+            //Act
+            MovieSearchService.searchInMovieTitleAndInMovieDescription("day", filteredMovies);
+
+            //Assert
+            assertEquals(1, filteredMovies.size());
         }
     }
 }
