@@ -1,6 +1,5 @@
 package at.ac.fhcampuswien.fhmdb.service;
 
-import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 
 import okhttp3.OkHttpClient;
@@ -43,7 +42,29 @@ public class MovieAPIService {
         return new ArrayList<>();
     }
 
-    public List<Movie> getMoviesBy(String text, Genre genre){
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public static List<Movie> getMoviesBy(String text, String genre) throws IOException {
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+
+        Request request = new Request.Builder()
+                .url(API.concat("movies?query=").concat(text).concat("&genre=").concat(genre))
+                .header("User-Agent", "http.agent")
+                .method("GET", null)
+                .build();
+
+        Response response = client.newCall(request).execute();
+
+        if (response.body() != null){
+            ObjectMapper mapper = new ObjectMapper();
+            Movie[] movies = mapper.readValue(response.body().string(), Movie[].class);
+
+            response.close();
+
+            return List.of(movies);
+        }
+
+        response.close();
+
+        return new ArrayList<>();
     }
 }
