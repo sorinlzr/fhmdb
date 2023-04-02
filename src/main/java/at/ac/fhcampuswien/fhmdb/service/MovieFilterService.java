@@ -12,7 +12,14 @@ public class MovieFilterService {
     }
 
     public static void filterMoviesByGenre(Genre genre, FilteredList<Movie> filteredMovies) {
-        filteredMovies.setPredicate(getFilterMoviesByGenrePredicate(genre).and(filteredMovies.getPredicate()));
+        Predicate<? super Movie> existingPredicate = filteredMovies.getPredicate();
+        Predicate<Movie> genrePredicate = getFilterMoviesByGenrePredicate(genre);
+
+        if (existingPredicate != null) {
+            filteredMovies.setPredicate(genrePredicate.and(existingPredicate));
+        } else {
+            filteredMovies.setPredicate(genrePredicate);
+        }
     }
 
     private static Predicate<Movie> getFilterMoviesByGenrePredicate(Genre genre) {

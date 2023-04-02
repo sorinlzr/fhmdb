@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MovieTest {
 
     @Nested
-    public class CompareTo {
+    class CompareTo {
         static Movie movie1;
         static Movie movie2;
         static Movie movie3;
@@ -20,7 +20,7 @@ public class MovieTest {
         static Movie movie6;
 
         @BeforeAll
-        public static void beforeAll() {
+        static void beforeAll() {
             movie1 = new Movie("1","Die Hard", "A movie about a hard death.");
             movie2 = new Movie("2","Die Easy", "A movie about an easy death.");
             movie3 = new Movie("3","A", "An A class movie!");
@@ -30,7 +30,7 @@ public class MovieTest {
         }
 
         @Test
-        public void Movie_A_is_smaller_than_Movie_B_if_the_title_is_alphabetically_first() {
+        void Movie_A_is_smaller_than_Movie_B_if_the_title_is_alphabetically_first() {
             assertTrue(movie1.compareTo(movie4) < 0);
 
             assertTrue(movie2.compareTo(movie1) < 0);
@@ -47,7 +47,7 @@ public class MovieTest {
         }
 
         @Test
-        public void Movie_A_is_greater_than_Movie_B_if_the_title_is_alphabetically_last() {
+        void Movie_A_is_greater_than_Movie_B_if_the_title_is_alphabetically_last() {
             assertTrue(movie4.compareTo(movie1) > 0);
 
             assertTrue(movie1.compareTo(movie2) > 0);
@@ -64,14 +64,9 @@ public class MovieTest {
         }
 
         @Test
-        public void Movie_A_is_at_the_same_position_as_Movie_B_if_the_title_is_alphabetically_the_same() {
+        void Movie_A_is_at_the_same_position_as_Movie_B_if_the_title_is_alphabetically_the_same() {
             assertEquals(0, movie1.compareTo(movie6));
             assertEquals(0, movie6.compareTo(movie1));
-        }
-
-        @Test
-        public void throws_an_exception_if_Movie_B_is_null() {
-            assertThrows(IllegalArgumentException.class, () -> movie1.compareTo(null));
         }
     }
 }

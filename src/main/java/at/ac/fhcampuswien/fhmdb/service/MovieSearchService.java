@@ -12,14 +12,28 @@ public class MovieSearchService {
     }
 
     public static void searchInMovieTitleAndInMovieDescription(String searchTerm, FilteredList<Movie> filteredMovies) {
-        Predicate<Movie> combinedPredicate = getSearchInMovieTitlePredicate(searchTerm)
-                .or(getSearchInMovieDescriptionPredicate(searchTerm));
+        Predicate<? super Movie> existingPredicate = filteredMovies.getPredicate();
+        Predicate<Movie> movieTitlePredicate = getSearchInMovieTitlePredicate(searchTerm);
+        Predicate<Movie> movieDescriptionPredicate = getSearchInMovieDescriptionPredicate(searchTerm);
 
-        filteredMovies.setPredicate(combinedPredicate.and(filteredMovies.getPredicate()));
+        Predicate<Movie> combinedPredicate = movieTitlePredicate.or(movieDescriptionPredicate);
+
+        if (existingPredicate != null){
+            filteredMovies.setPredicate(combinedPredicate.and(existingPredicate));
+        }else {
+            filteredMovies.setPredicate(combinedPredicate);
+        }
     }
 
     public static void searchInMovieTitle(String movieTitle, FilteredList<Movie> filteredMovies) {
-        filteredMovies.setPredicate(getSearchInMovieTitlePredicate(movieTitle).and(filteredMovies.getPredicate()));
+        Predicate<? super Movie> existingPredicate = filteredMovies.getPredicate();
+        Predicate<Movie> movieTitlePredicate = getSearchInMovieTitlePredicate(movieTitle);
+
+        if (existingPredicate != null){
+            filteredMovies.setPredicate(movieTitlePredicate.and(existingPredicate));
+        }else{
+            filteredMovies.setPredicate(movieTitlePredicate);
+        }
     }
 
     private static Predicate<Movie> getSearchInMovieTitlePredicate(String movieTitle) {
@@ -27,7 +41,14 @@ public class MovieSearchService {
     }
 
     public static void searchInMovieDescription(String movieDescription, FilteredList<Movie> filteredMovies) {
-        filteredMovies.setPredicate(getSearchInMovieDescriptionPredicate(movieDescription).and(filteredMovies.getPredicate()));
+        Predicate<? super Movie> existingPredicate = filteredMovies.getPredicate();
+        Predicate<Movie> movieDescriptionPredicate = getSearchInMovieDescriptionPredicate(movieDescription);
+
+        if (existingPredicate != null){
+            filteredMovies.setPredicate(movieDescriptionPredicate.and(existingPredicate));
+        }else{
+            filteredMovies.setPredicate(movieDescriptionPredicate);
+        }
     }
 
     private static Predicate<Movie> getSearchInMovieDescriptionPredicate(String movieDescription) {
