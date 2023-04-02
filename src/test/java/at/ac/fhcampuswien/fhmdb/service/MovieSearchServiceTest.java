@@ -189,5 +189,9 @@ class MovieSearchServiceTest {
     class SearchInMovieTitleAndInMovieDescription{
         //TODO implement tests for searchInMovieTitleAndInMovieDescription
         //TODO test with and without existing predicate.
+        @Test
+        void ImplementSomeTestsHere() {
+            throw new UnsupportedOperationException("Implement some tests here");
+        }
     }
 }

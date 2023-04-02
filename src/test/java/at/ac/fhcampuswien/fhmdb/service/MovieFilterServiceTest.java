@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MovieFilterServiceTest {
-
     private static TextField searchField;
     private static JFXComboBox<Genre> genreComboBox;
     private static JFXComboBox<Integer> releaseYearPicker;
@@ -40,31 +39,31 @@ class MovieFilterServiceTest {
         // 1 movie with the word "story" and the genre "Action"
         // 1 movie with the word "story" and the genre "Fantasy"
 
-        Movie movie1 = new Movie("1","Die Hard", "A story about a man who can't seem to die");
+        Movie movie1 = new Movie("1", "Die Hard", "A story about a man who can't seem to die");
         movie1.setGenres(new ArrayList<>() {{
             add(Genre.ACTION);
             add(Genre.DRAMA);
         }});
 
-        Movie movie2 = new Movie("2","Rush Hour", "Two detectives, one throws punches as fast as the other one can talk");
+        Movie movie2 = new Movie("2", "Rush Hour", "Two detectives, one throws punches as fast as the other one can talk");
         movie2.setGenres(new ArrayList<>() {{
             add(Genre.ACTION);
             add(Genre.COMEDY);
         }});
 
-        Movie movie3 = new Movie("3","Independence Day", "A movie inspired by true events");
+        Movie movie3 = new Movie("3", "Independence Day", "A movie inspired by true events");
         movie3.setGenres(new ArrayList<>() {{
             add(Genre.SCIENCE_FICTION);
             add(Genre.DOCUMENTARY);
         }});
 
-        Movie movie4 = new Movie("4","Star Trek", "Beam me up, Scotty! - Ay ay captain!");
+        Movie movie4 = new Movie("4", "Star Trek", "Beam me up, Scotty! - Ay ay captain!");
         movie4.setGenres(new ArrayList<>() {{
             add(Genre.ACTION);
             add(Genre.SCIENCE_FICTION);
         }});
 
-        Movie movie5 = new Movie("5","Lord of the rings", "A story of an odd group that spends around 9 hours returning jewelry");
+        Movie movie5 = new Movie("5", "Lord of the rings", "A story of an odd group that spends around 9 hours returning jewelry");
         movie5.setGenres(new ArrayList<>() {{
             add(Genre.FANTASY);
             add(Genre.ADVENTURE);
@@ -92,53 +91,8 @@ class MovieFilterServiceTest {
         filteredMovies.set(homeController, MovieFilterServiceTest.filteredMovies);
     }
 
-    @Nested
-    class ResetSearchAndFilterCriteria {
-        // TODO move to HomeControllerTest
-        String searchFieldText = "story";
-
-        @Test
-        void shouldResetSelectionAndClearInputField() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-            //Arrange
-            MovieFilterServiceTest.searchField.setText(this.searchFieldText);
-            MovieFilterServiceTest.genreComboBox.setValue(Genre.ACTION);
-
-            Field searchField = HomeController.class.getDeclaredField("searchField");
-            searchField.setAccessible(true);
-            searchField.set(homeController, MovieFilterServiceTest.searchField);
-
-            Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
-            genreComboBox.setAccessible(true);
-            genreComboBox.set(homeController, MovieFilterServiceTest.genreComboBox);
-
-            Field filteredMovies = HomeController.class.getDeclaredField("filteredMovies");
-            filteredMovies.setAccessible(true);
-
-            Method searchAndFilterMovies = HomeController.class.getDeclaredMethod("searchAndFilterMovies");
-            searchAndFilterMovies.setAccessible(true);
-
-            //Act
-            searchAndFilterMovies.invoke(homeController);
-
-            //Assert
-            assertEquals(1, MovieFilterServiceTest.filteredMovies.size());
-            assertEquals(this.searchFieldText, ((TextField)searchField.get(homeController)).getText());
-
-            //Arrange
-            Method resetSearchAndFilterCriteria = HomeController.class.getDeclaredMethod("resetSearchAndFilterCriteria");
-            resetSearchAndFilterCriteria.setAccessible(true);
-
-            //Act
-            resetSearchAndFilterCriteria.invoke(homeController);
-
-            //Assert
-            assertTrue(((JFXComboBox<Genre>)genreComboBox.get(homeController)).getSelectionModel().isEmpty());
-            assertEquals(5, MovieFilterServiceTest.filteredMovies.size());
-            assertEquals("", ((TextField)searchField.get(homeController)).getText());
-        }
-    }
-
-//    @Nested
+    //TODO: Implement tests for the following methods
+    //    @Nested
 //    class SelectGenre{
 //        Genre action = Genre.ACTION;
 //
@@ -163,8 +117,11 @@ class MovieFilterServiceTest {
 //        }
 //    }
 //
-//    @Nested
-//    class FilterMoviesByGenre{
-//        // TODO implement tests here
-//    }
+    @Nested
+    class FilterMoviesByGenre {
+        @Test
+        void ImplementSomeTestsHere() {
+            throw new UnsupportedOperationException("Implement some tests here");
+        }
+    }
 }
