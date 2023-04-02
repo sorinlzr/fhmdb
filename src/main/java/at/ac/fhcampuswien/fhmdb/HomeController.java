@@ -24,42 +24,32 @@ import java.util.stream.IntStream;
 
 public class HomeController implements Initializable {
     @FXML
-    public JFXButton resetFilterBtn;
+    private JFXButton resetFilterBtn;
 
     @FXML
-    public JFXButton searchBtn;
+    private JFXButton searchBtn;
 
     @FXML
-    public TextField searchField;
+    private JFXButton sortBtn;
 
     @FXML
-    public JFXListView<Movie> movieListView;
+    private TextField searchField;
 
     @FXML
-    public JFXComboBox<Genre> genreComboBox;
+    private JFXComboBox<Genre> genreComboBox;
 
     @FXML
-    public JFXComboBox<Integer> releaseYearPicker;
+    private JFXComboBox<Integer> releaseYearPicker;
 
     @FXML
-    public JFXComboBox<RatingOption> ratingComboBox;
+    private JFXComboBox<RatingOption> ratingComboBox;
 
     @FXML
-    public JFXButton sortBtn;
+    private JFXListView<Movie> movieListView;
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
     private final FilteredList<Movie> filteredMovies = new FilteredList<>(observableMovies);
-
-    private final List<Integer> releaseYears;
-
-    public HomeController() {
-        int currentYear = java.time.LocalDate.now().getYear();
-
-        releaseYears = IntStream.rangeClosed(0, 80)
-                .mapToObj(i -> currentYear - i)
-                .toList();
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -78,6 +68,12 @@ public class HomeController implements Initializable {
 
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
+
+        int currentYear = java.time.LocalDate.now().getYear();
+
+        List<Integer> releaseYears = IntStream.rangeClosed(0, 80)
+                .mapToObj(i -> currentYear - i)
+                .toList();
 
         releaseYearPicker.setPromptText("Filter by Release Year");
         releaseYearPicker.getItems().addAll(releaseYears);
@@ -100,7 +96,7 @@ public class HomeController implements Initializable {
         resetFilterBtn.setOnAction(actionEvent -> resetSearchAndFilterCriteria());
     }
 
-    public void searchAndFilterMovies() {
+    private void searchAndFilterMovies() {
         filteredMovies.setPredicate(movie -> true);
 
         String searchQuery = searchField.getText().trim();
@@ -110,7 +106,7 @@ public class HomeController implements Initializable {
         if (genre != null && genre != Genre.ALL) MovieFilterService.filterMoviesByGenre(genre, filteredMovies);
     }
 
-    public void resetSearchAndFilterCriteria() {
+    private void resetSearchAndFilterCriteria() {
         searchField.clear();
 
         genreComboBox.setValue(Genre.ALL);
@@ -120,22 +116,22 @@ public class HomeController implements Initializable {
     }
 
     //TODO move to different class??
-    public String getMostPopularActor(List<Movie> movies) {
+    private String getMostPopularActor(List<Movie> movies) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     //TODO move to different class??
-    public int getLongestMovieTitle(List<Movie> movies) {
+    private int getLongestMovieTitle(List<Movie> movies) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     //TODO move to different class??
-    public long countMoviesFrom(List<Movie> movies, String director) {
+    private long countMoviesFrom(List<Movie> movies, String director) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     //TODO move to different class??
-    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+    private List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 }

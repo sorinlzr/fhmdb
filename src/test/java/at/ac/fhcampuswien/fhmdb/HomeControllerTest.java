@@ -82,9 +82,9 @@ class HomeControllerTest {
     }
 
     @Nested
-    public class GenreIsSelected {
+    class GenreIsSelected {
         @Test
-        public void whenGenreIsSelected_thenFilteredListShouldContainOnlyMoviesWithThatGenre() {
+        void whenGenreIsSelected_thenFilteredListShouldContainOnlyMoviesWithThatGenre() {
             genreComboBox.setValue(Genre.ACTION);
 
 //            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
@@ -93,11 +93,10 @@ class HomeControllerTest {
             assertEquals(3, filteredList.size());
         }
     }
-
     @Nested
-    public class SearchFieldIsFilled {
+    class SearchFieldIsFilled {
         @Test
-        public void whenSearchFieldIsFilled_thenFilteredListShouldContainOnlyMoviesThatMatchSearchCriteria() {
+        void whenSearchFieldIsFilled_thenFilteredListShouldContainOnlyMoviesThatMatchSearchCriteria() {
             String searchCriteria = "story";
             searchField.setText(searchCriteria);
 
@@ -108,9 +107,8 @@ class HomeControllerTest {
             assertEquals(searchCriteria, searchField.getText());
         }
     }
-
     @Nested
-    public class GenreIsSelectedAndSearchFieldIsFilled {
+    class GenreIsSelectedAndSearchFieldIsFilled {
         String searchCriteria = "story";
 
         @BeforeEach
@@ -121,7 +119,7 @@ class HomeControllerTest {
         }
 
         @Test
-        public void filteredListShouldContainOnlyMoviesThatMatchSearchCriteriaAndGenre() {
+        void filteredListShouldContainOnlyMoviesThatMatchSearchCriteriaAndGenre() {
             assertEquals(5, observableMovies.size());
             assertEquals(searchCriteria, searchField.getText());
             for (Movie movie : filteredList) {
@@ -131,7 +129,7 @@ class HomeControllerTest {
         }
 
         @Test
-        public void whenGenreIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchSearchCriteria() {
+        void whenGenreIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchSearchCriteria() {
             assertEquals(5, observableMovies.size());
 //            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
             assertEquals(searchCriteria, searchField.getText());
@@ -142,23 +140,22 @@ class HomeControllerTest {
         }
 
         @Test
-        public void whenSearchFieldIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchGenre() {
+        void whenSearchFieldIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchGenre() {
             searchField.setText("");
 //            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
             assertEquals(3, filteredList.size());
         }
 
         @Test
-        public void whenSearchFieldIsResetAndThenGenreIsReset_thenFilteredListShouldContainAllMovies() {
+        void whenSearchFieldIsResetAndThenGenreIsReset_thenFilteredListShouldContainAllMovies() {
             searchField.setText("");
             genreComboBox.setValue(Genre.ALL);
 //            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
             assertEquals(5, filteredList.size());
         }
     }
-
     @Nested
-    public class SearchFieldIsFilledAndGenreIsSelected {
+    class SearchFieldIsFilledAndGenreIsSelected {
         String searchCriteria = "story";
         Genre genre = Genre.ACTION;
 
@@ -170,7 +167,7 @@ class HomeControllerTest {
         }
 
         @Test
-        public void filteredListShouldContainOnlyMoviesThatMatchSearchCriteriaAndGenre() {
+        void filteredListShouldContainOnlyMoviesThatMatchSearchCriteriaAndGenre() {
             assertEquals(5, observableMovies.size());
             assertEquals(searchCriteria, searchField.getText());
             for (Movie movie : filteredList) {
@@ -180,7 +177,7 @@ class HomeControllerTest {
         }
 
         @Test
-        public void whenGenreIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchSearchCriteria() {
+        void whenGenreIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchSearchCriteria() {
             assertEquals(5, observableMovies.size());
 //            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
             assertEquals(searchCriteria, searchField.getText());
@@ -191,14 +188,14 @@ class HomeControllerTest {
         }
 
         @Test
-        public void whenSearchFieldIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchGenre() {
+        void whenSearchFieldIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchGenre() {
             searchField.setText("");
 //            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
             assertEquals(3, filteredList.size());
         }
 
         @Test
-        public void whenSearchFieldIsResetAndThenGenreIsReset_thenFilteredListShouldContainAllMovies() {
+        void whenSearchFieldIsResetAndThenGenreIsReset_thenFilteredListShouldContainAllMovies() {
 //            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
             assertEquals(1, filteredList.size());
             searchField.setText("");
@@ -207,5 +204,4 @@ class HomeControllerTest {
             assertEquals(5, filteredList.size());
         }
     }
-
 }
