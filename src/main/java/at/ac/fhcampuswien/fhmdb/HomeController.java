@@ -117,7 +117,7 @@ public class HomeController implements Initializable {
 
     public String getMostPopularActor(List<Movie> movies) {
         return movies.stream()
-                // convert every main cast into a separate stream and then flatten the main cast of all movies into a single stream
+                // convert every main cast into a separate stream and flatten the main cast of all movies into a single stream
                 .flatMap(movie -> movie.getMainCast().stream())
 
                 // Group actors by their name and count their occurrences using the Collectors.groupingBy method
