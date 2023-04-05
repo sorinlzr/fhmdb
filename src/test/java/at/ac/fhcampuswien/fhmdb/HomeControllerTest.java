@@ -97,8 +97,6 @@ class HomeControllerTest {
     class ResetSearchAndFilterCriteria {
         @Test
         void shouldResetSelectionAndClearInputField() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-            //TODO refactor to only have one arrange act assert block
-
             //Arrange
             String searchCriteria = "story";
 

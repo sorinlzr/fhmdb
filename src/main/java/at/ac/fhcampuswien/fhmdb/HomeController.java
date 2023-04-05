@@ -30,17 +30,26 @@ public class HomeController implements Initializable {
     @FXML
     private JFXButton sortBtn;
 
+    private static final String SORT_DEFAULT_TEXT_ASC = "Sort (asc)";
+    private static final String SORT_DEFAULT_TEXT_DESC = "Sort (desc)";
+
     @FXML
     private TextField searchField;
 
     @FXML
     private JFXComboBox<Genre> genreComboBox;
 
+    private static final String GENRE_DEFAULT_TEXT = "Filter by Genre";
+
     @FXML
     private JFXComboBox<Integer> releaseYearPicker;
 
+    private static final String RELEASE_YEAR_DEFAULT_TEXT = "Filter by Release Year";
+
     @FXML
     private JFXComboBox<RatingOption> ratingComboBox;
+
+    private static final String RATING_DEFAULT_TEXT = "Filter by Rating";
 
     @FXML
     private JFXListView<Movie> movieListView;
@@ -60,11 +69,12 @@ public class HomeController implements Initializable {
         }
 
         observableMovies.addAll(allMovies);
+        sortMovies();
 
         movieListView.setItems(filteredMovies);
         movieListView.setCellFactory(e -> new MovieCell());
 
-        genreComboBox.setPromptText("Filter by Genre");
+        genreComboBox.setPromptText(GENRE_DEFAULT_TEXT);
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setValue(Genre.ALL);
 
@@ -74,24 +84,14 @@ public class HomeController implements Initializable {
                 .mapToObj(i -> currentYear - i)
                 .toList();
 
-        releaseYearPicker.setPromptText("Filter by Release Year");
+        releaseYearPicker.setPromptText(RELEASE_YEAR_DEFAULT_TEXT);
         releaseYearPicker.getItems().addAll(releaseYears);
 
-        ratingComboBox.setPromptText("Filter by Rating");
+        ratingComboBox.setPromptText(RATING_DEFAULT_TEXT);
         ratingComboBox.getItems().addAll(RatingOption.values());
 
         searchBtn.setOnAction(actionEvent -> setFilter());
-
-        sortBtn.setOnAction(actionEvent -> {
-            if (sortBtn.getText().equals("Sort (asc)")) {
-                observableMovies.sort(Comparator.naturalOrder());
-                sortBtn.setText("Sort (desc)");
-            } else {
-                observableMovies.sort(Collections.reverseOrder());
-                sortBtn.setText("Sort (asc)");
-            }
-        });
-
+        sortBtn.setOnAction(actionEvent -> sortMoviesAndSetButtonText());
         resetFilterBtn.setOnAction(actionEvent -> resetFilter());
     }
 
@@ -100,8 +100,14 @@ public class HomeController implements Initializable {
 
         searchField.clear();
 
+        sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
+
+        genreComboBox.setPromptText(GENRE_DEFAULT_TEXT);
         genreComboBox.getSelectionModel().clearSelection();
         genreComboBox.setValue(Genre.ALL);
+
+        releaseYearPicker.setPromptText(RELEASE_YEAR_DEFAULT_TEXT);
+        releaseYearPicker.getSelectionModel().clearSelection();
 
         List<Movie> allMovies;
 
@@ -112,6 +118,7 @@ public class HomeController implements Initializable {
         }
 
         observableMovies.addAll(allMovies);
+        sortMovies();
     }
 
     private void setFilter() {
@@ -120,13 +127,33 @@ public class HomeController implements Initializable {
         List<Movie> moviesWithFilter;
 
         String genre = genreComboBox.getValue() == Genre.ALL ? "" : genreComboBox.getValue().name();
+        String releaseYear = releaseYearPicker.getValue() == null ? "" : releaseYearPicker.getValue().toString();
 
         try {
-            moviesWithFilter = MovieAPIService.getMoviesBy(searchField.getText(), genre);
+            moviesWithFilter = MovieAPIService.getMoviesBy(searchField.getText(), genre, releaseYear);
         } catch (IOException e){
             moviesWithFilter = new ArrayList<>();
         }
 
         observableMovies.addAll(moviesWithFilter);
+        sortMovies();
+    }
+
+    private void sortMovies(){
+        if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
+            observableMovies.sort(Collections.reverseOrder());
+        } else {
+            observableMovies.sort(Comparator.naturalOrder());
+        }
+    }
+
+    private void sortMoviesAndSetButtonText(){
+        if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
+            observableMovies.sort(Comparator.naturalOrder());
+            sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
+        } else {
+            observableMovies.sort(Collections.reverseOrder());
+            sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
+        }
     }
 }
