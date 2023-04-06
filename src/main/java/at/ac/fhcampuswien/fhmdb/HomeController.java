@@ -1,8 +1,9 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.models.RatingOption;
+import at.ac.fhcampuswien.fhmdb.filter.Rating;
+import at.ac.fhcampuswien.fhmdb.filter.Year;
 import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
-import at.ac.fhcampuswien.fhmdb.models.Genre;
+import at.ac.fhcampuswien.fhmdb.filter.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
@@ -18,7 +19,6 @@ import javafx.scene.control.TextField;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.IntStream;
 
 public class HomeController implements Initializable {
     @FXML
@@ -39,17 +39,11 @@ public class HomeController implements Initializable {
     @FXML
     private JFXComboBox<Genre> genreComboBox;
 
-    private static final String GENRE_DEFAULT_TEXT = "Filter by Genre";
+    @FXML
+    private JFXComboBox<Year> releaseYearPicker;
 
     @FXML
-    private JFXComboBox<Integer> releaseYearPicker;
-
-    private static final String RELEASE_YEAR_DEFAULT_TEXT = "Filter by Release Year";
-
-    @FXML
-    private JFXComboBox<RatingOption> ratingComboBox;
-
-    private static final String RATING_DEFAULT_TEXT = "Filter by Rating";
+    private JFXComboBox<Rating> ratingComboBox;
 
     @FXML
     private JFXListView<Movie> movieListView;
@@ -74,21 +68,14 @@ public class HomeController implements Initializable {
         movieListView.setItems(filteredMovies);
         movieListView.setCellFactory(e -> new MovieCell());
 
-        genreComboBox.setPromptText(GENRE_DEFAULT_TEXT);
         genreComboBox.getItems().addAll(Genre.values());
-        genreComboBox.setValue(Genre.ALL);
+        genreComboBox.setValue(Genre.NO_FILTER);
 
-        int currentYear = java.time.LocalDate.now().getYear();
+        releaseYearPicker.getItems().addAll(Year.values());
+        releaseYearPicker.setValue(Year.NO_FILTER);
 
-        List<Integer> releaseYears = IntStream.rangeClosed(0, 80)
-                .mapToObj(i -> currentYear - i)
-                .toList();
-
-        releaseYearPicker.setPromptText(RELEASE_YEAR_DEFAULT_TEXT);
-        releaseYearPicker.getItems().addAll(releaseYears);
-
-        ratingComboBox.setPromptText(RATING_DEFAULT_TEXT);
-        ratingComboBox.getItems().addAll(RatingOption.values());
+        ratingComboBox.getItems().addAll(Rating.values());
+        ratingComboBox.setValue(Rating.NO_FILTER);
 
         searchBtn.setOnAction(actionEvent -> setFilter());
         sortBtn.setOnAction(actionEvent -> sortMoviesAndSetButtonText());
@@ -97,20 +84,13 @@ public class HomeController implements Initializable {
 
     private void resetFilter() {
         observableMovies.clear();
-
         searchField.clear();
 
         sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
 
-        genreComboBox.setPromptText(GENRE_DEFAULT_TEXT);
-        genreComboBox.getSelectionModel().clearSelection();
-        genreComboBox.setValue(Genre.ALL);
-
-        releaseYearPicker.setPromptText(RELEASE_YEAR_DEFAULT_TEXT);
-        releaseYearPicker.getSelectionModel().clearSelection();
-
-        ratingComboBox.setPromptText(RATING_DEFAULT_TEXT);
-        ratingComboBox.getSelectionModel().clearSelection();
+        genreComboBox.setValue(Genre.NO_FILTER);
+        releaseYearPicker.setValue(Year.NO_FILTER);
+        ratingComboBox.setValue(Rating.NO_FILTER);
 
         List<Movie> allMovies;
 
@@ -129,9 +109,9 @@ public class HomeController implements Initializable {
 
         List<Movie> moviesWithFilter;
 
-        String genre = genreComboBox.getValue() == Genre.ALL ? "" : genreComboBox.getValue().name();
-        String releaseYear = releaseYearPicker.getValue() == null ? "" : releaseYearPicker.getValue().toString();
-        String ratingFrom = ratingComboBox.getValue() == null ? "" : String.valueOf(ratingComboBox.getValue().getMinRating());
+        String genre = genreComboBox.getValue() == Genre.NO_FILTER ? "" : genreComboBox.getValue().name();
+        String releaseYear = releaseYearPicker.getValue() == Year.NO_FILTER ? "" : releaseYearPicker.getValue().toString();
+        String ratingFrom = ratingComboBox.getValue() == Rating.NO_FILTER ? "" : String.valueOf(ratingComboBox.getValue().getRatingFrom());
 
         try {
             moviesWithFilter = MovieAPIService.getMoviesBy(searchField.getText(), genre, releaseYear, ratingFrom);

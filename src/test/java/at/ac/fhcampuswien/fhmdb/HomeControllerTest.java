@@ -1,6 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.models.Genre;
+import at.ac.fhcampuswien.fhmdb.filter.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
@@ -248,7 +248,7 @@ class HomeControllerTest {
                 assertEquals(searchCriteria, ((TextField) searchField.get(homeController)).getText());
                 assertEquals(1, HomeControllerTest.filteredMovies.size());
 
-                HomeControllerTest.genreComboBox.setValue(Genre.ALL);
+                HomeControllerTest.genreComboBox.setValue(Genre.NO_FILTER);
                 genreComboBox.set(homeController, HomeControllerTest.genreComboBox);
 
                 // Act
@@ -283,7 +283,7 @@ class HomeControllerTest {
 
                 Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
                 genreComboBox.setAccessible(true);
-                HomeControllerTest.genreComboBox.setValue(Genre.ALL);
+                HomeControllerTest.genreComboBox.setValue(Genre.NO_FILTER);
                 genreComboBox.set(homeController, HomeControllerTest.genreComboBox);
 
                 // Act
@@ -346,7 +346,7 @@ class HomeControllerTest {
 
                 Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
                 genreComboBox.setAccessible(true);
-                HomeControllerTest.genreComboBox.setValue(Genre.ALL);
+                HomeControllerTest.genreComboBox.setValue(Genre.NO_FILTER);
                 genreComboBox.set(homeController, HomeControllerTest.genreComboBox);
 
                 // Act
@@ -383,7 +383,7 @@ class HomeControllerTest {
 
                 Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
                 genreComboBox.setAccessible(true);
-                HomeControllerTest.genreComboBox.setValue(Genre.ALL);
+                HomeControllerTest.genreComboBox.setValue(Genre.NO_FILTER);
                 genreComboBox.set(homeController, HomeControllerTest.genreComboBox);
 
                 // Act

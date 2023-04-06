@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
+import at.ac.fhcampuswien.fhmdb.filter.Genre;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

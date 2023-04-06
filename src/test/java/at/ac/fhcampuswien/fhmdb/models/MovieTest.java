@@ -2,10 +2,6 @@ package at.ac.fhcampuswien.fhmdb.models;
 
 import org.junit.jupiter.api.*;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MovieTest {
