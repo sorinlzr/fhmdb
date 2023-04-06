@@ -1,6 +1,8 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
 public enum RatingOption {
+    // TODO Move to filter folder.
+    // TODO refactor to display the name as String so that the default message can be displayed.
     RATING_9_TO_10(9.0, 10.0),
     RATING_8_TO_9(8.0, 9.0),
     RATING_7_TO_8(7.0, 8.0),
@@ -14,6 +16,14 @@ public enum RatingOption {
 
     private final double minRating;
     private final double maxRating;
+
+    public double getMinRating() {
+        return minRating;
+    }
+
+    public double getMaxRating() {
+        return maxRating;
+    }
 
     RatingOption(double minRating, double maxRating) {
         this.minRating = minRating;

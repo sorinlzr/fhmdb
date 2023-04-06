@@ -26,11 +26,12 @@ public class MovieAPIService {
         return makeMovieRequest(request);
     }
 
-    public static List<Movie> getMoviesBy(String text, String genre, String releaseYear) throws IOException {
+    public static List<Movie> getMoviesBy(String text, String genre, String releaseYear, String ratingFrom) throws IOException {
         Request request = new Request.Builder()
                 .url(API.concat("movies?query=").concat(text)
                         .concat("&genre=").concat(genre)
-                        .concat("&releaseYear=").concat(releaseYear))
+                        .concat("&releaseYear=").concat(releaseYear)
+                        .concat("&ratingFrom=").concat(ratingFrom))
                 .header("User-Agent", "http.agent")
                 .method("GET", null)
                 .build();

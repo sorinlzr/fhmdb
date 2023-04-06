@@ -1,6 +1,8 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
 public enum Genre {
+    // TODO refactor to display the name as string like in the rating options.
+    // TODO Move to filter folder.
     ALL,
     ACTION,
     ADVENTURE,

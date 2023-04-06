@@ -109,6 +109,9 @@ public class HomeController implements Initializable {
         releaseYearPicker.setPromptText(RELEASE_YEAR_DEFAULT_TEXT);
         releaseYearPicker.getSelectionModel().clearSelection();
 
+        ratingComboBox.setPromptText(RATING_DEFAULT_TEXT);
+        ratingComboBox.getSelectionModel().clearSelection();
+
         List<Movie> allMovies;
 
         try {
@@ -128,9 +131,10 @@ public class HomeController implements Initializable {
 
         String genre = genreComboBox.getValue() == Genre.ALL ? "" : genreComboBox.getValue().name();
         String releaseYear = releaseYearPicker.getValue() == null ? "" : releaseYearPicker.getValue().toString();
+        String ratingFrom = ratingComboBox.getValue() == null ? "" : String.valueOf(ratingComboBox.getValue().getMinRating());
 
         try {
-            moviesWithFilter = MovieAPIService.getMoviesBy(searchField.getText(), genre, releaseYear);
+            moviesWithFilter = MovieAPIService.getMoviesBy(searchField.getText(), genre, releaseYear, ratingFrom);
         } catch (IOException e){
             moviesWithFilter = new ArrayList<>();
         }
