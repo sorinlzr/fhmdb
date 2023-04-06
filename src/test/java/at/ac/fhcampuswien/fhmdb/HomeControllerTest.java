@@ -1,29 +1,44 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.filter.Genre;
+import at.ac.fhcampuswien.fhmdb.filter.Rating;
+import at.ac.fhcampuswien.fhmdb.filter.Year;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.TextField;
+import kotlin.NotImplementedError;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 class HomeControllerTest {
 
     private static TextField searchField;
+    private static JFXButton searchBtn;
+    private static JFXButton resetFilterBtn;
+    private static JFXButton sortBtn;
     private static JFXComboBox<Genre> genreComboBox;
     private static JFXComboBox<Integer> releaseYearPicker;
     private static JFXComboBox<Integer> ratingComboBox;
@@ -77,9 +92,12 @@ class HomeControllerTest {
     }
 
     @BeforeEach
-    void setUp() throws NoSuchFieldException, IllegalAccessException {
+    void setUp() throws NoSuchFieldException, IllegalAccessException, IOException {
         homeController = new HomeController();
 
+        HomeControllerTest.searchBtn = new JFXButton();
+        HomeControllerTest.resetFilterBtn = new JFXButton();
+        HomeControllerTest.sortBtn = new JFXButton();
         HomeControllerTest.searchField = new TextField();
         HomeControllerTest.genreComboBox = new JFXComboBox<>();
         HomeControllerTest.releaseYearPicker = new JFXComboBox<>();
@@ -91,10 +109,118 @@ class HomeControllerTest {
         Field filteredMovies = HomeController.class.getDeclaredField("filteredMovies");
         filteredMovies.setAccessible(true);
         filteredMovies.set(homeController, HomeControllerTest.filteredMovies);
+
+        Field searchBtn = HomeController.class.getDeclaredField("searchBtn");
+        searchBtn.setAccessible(true);
+        searchBtn.set(homeController, HomeControllerTest.searchBtn);
+
+        Field resetFilterBtn = HomeController.class.getDeclaredField("resetFilterBtn");
+        resetFilterBtn.setAccessible(true);
+        resetFilterBtn.set(homeController, HomeControllerTest.resetFilterBtn);
+
+        Field sortBtn = HomeController.class.getDeclaredField("sortBtn");
+        sortBtn.setAccessible(true);
+        sortBtn.set(homeController, HomeControllerTest.sortBtn);
+
+        Field searchField = HomeController.class.getDeclaredField("searchField");
+        searchField.setAccessible(true);
+        searchField.set(homeController, HomeControllerTest.searchField);
+
+        Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
+        genreComboBox.setAccessible(true);
+        genreComboBox.set(homeController, HomeControllerTest.genreComboBox);
+
+        Field releaseYearPicker = HomeController.class.getDeclaredField("releaseYearPicker");
+        releaseYearPicker.setAccessible(true);
+        releaseYearPicker.set(homeController, HomeControllerTest.releaseYearPicker);
+
+        Field ratingComboBox = HomeController.class.getDeclaredField("ratingComboBox");
+        ratingComboBox.setAccessible(true);
+        ratingComboBox.set(homeController, HomeControllerTest.ratingComboBox);
+
+        Field movieListView = HomeController.class.getDeclaredField("movieListView");
+        movieListView.setAccessible(true);
+        movieListView.set(homeController, HomeControllerTest.movieListView);
     }
 
     @Nested
-    class ResetSearchAndFilterCriteria {
+    class Initialize {
+        @Test
+        void Sets_the_right_default_value_for_the_genre_filter() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
+            genreComboBox.setAccessible(true);
+
+            Method initialize = HomeController.class.getDeclaredMethod("initialize");
+            initialize.setAccessible(true);
+
+            //Act
+            initialize.invoke(homeController);
+
+            //Assert
+            assertEquals(Genre.NO_FILTER, ((JFXComboBox<Genre>)genreComboBox.get(homeController)).getValue());
+        }
+
+        @Test
+        void Sets_the_right_default_value_for_the_release_year_filter() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            Field releaseYearPicker = HomeController.class.getDeclaredField("releaseYearPicker");
+            releaseYearPicker.setAccessible(true);
+
+            Method initialize = HomeController.class.getDeclaredMethod("initialize");
+            initialize.setAccessible(true);
+
+            //Act
+            initialize.invoke(homeController);
+
+            //Assert
+            assertEquals(Year.NO_FILTER, ((JFXComboBox<Integer>)releaseYearPicker.get(homeController)).getValue());
+        }
+
+        @Test
+        void Sets_the_right_default_value_for_the_rating_filter() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            Field ratingComboBox = HomeController.class.getDeclaredField("ratingComboBox");
+            ratingComboBox.setAccessible(true);
+
+            Method initialize = HomeController.class.getDeclaredMethod("initialize");
+            initialize.setAccessible(true);
+
+            //Act
+            initialize.invoke(homeController);
+
+            //Assert
+            assertEquals(Rating.NO_FILTER, ((JFXComboBox<Rating>)ratingComboBox.get(homeController)).getValue());
+        }
+
+        @Test
+        void Sets_movies_when_the_api_returns_movies() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Test
+        void Sets_movies_to_an_empty_list_if_the_api_throws_an_exception() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+            //Arrange
+            //TODO: Why does this not work?
+            MovieAPIService mock = mock(MovieAPIService.class);
+            Mockito.when(mock.getMovies()).thenThrow(new IOException());
+
+            Field filteredList = HomeController.class.getDeclaredField("filteredMovies");
+            filteredList.setAccessible(true);
+
+            Method initialize = HomeController.class.getDeclaredMethod("initialize");
+            initialize.setAccessible(true);
+
+            //Act
+            initialize.invoke(homeController);
+
+            //Assert
+            assertEquals(0, ((FilteredList<Movie>) filteredList.get(homeController)).size());
+        }
+    }
+
+    @Nested
+    class ResetFilter {
         @Test
         void shouldResetSelectionAndClearInputField() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
             //Arrange
@@ -114,7 +240,7 @@ class HomeControllerTest {
             Field filteredMovies = HomeController.class.getDeclaredField("filteredMovies");
             filteredMovies.setAccessible(true);
 
-            Method searchAndFilterMovies = HomeController.class.getDeclaredMethod("searchAndFilterMovies");
+            Method searchAndFilterMovies = HomeController.class.getDeclaredMethod("setFilter");
             searchAndFilterMovies.setAccessible(true);
 
             searchAndFilterMovies.invoke(homeController);
@@ -122,21 +248,21 @@ class HomeControllerTest {
             assertEquals(1, HomeControllerTest.filteredMovies.size());
             assertEquals(searchCriteria, ((TextField) searchField.get(homeController)).getText());
 
-            Method resetSearchAndFilterCriteria = HomeController.class.getDeclaredMethod("resetSearchAndFilterCriteria");
+            Method resetSearchAndFilterCriteria = HomeController.class.getDeclaredMethod("resetFilter");
             resetSearchAndFilterCriteria.setAccessible(true);
 
             //Act
             resetSearchAndFilterCriteria.invoke(homeController);
 
             //Assert
-            assertTrue(((JFXComboBox<Genre>) genreComboBox.get(homeController)).getSelectionModel().isEmpty());
+            assertEquals(((JFXComboBox<Genre>) genreComboBox.get(homeController)).getValue(), Genre.NO_FILTER);
             assertEquals(5, HomeControllerTest.filteredMovies.size());
             assertEquals("", ((TextField) searchField.get(homeController)).getText());
         }
     }
 
     @Nested
-    public class SearchAndFilterMovies {
+    public class SetFilter {
         private static Method searchAndFilterMovies;
 
         @BeforeAll

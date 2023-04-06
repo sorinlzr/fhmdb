@@ -13,28 +13,50 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-public class HomeController implements Initializable {
+public class HomeController {
+
+    /**
+     * Initializes the controller class.
+     * <p>
+     * <a href="https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/Initializable.html">JavaFX Initialize</a>
+     * NOTE This interface has been superseded by automatic injection of location and resources properties into the controller.
+     * FXMLLoader will now automatically call any suitably annotated no-arg initialize() method defined by the controller.
+     * It is recommended that the injection approach be used whenever possible.
+     */
     @FXML
-    private JFXButton resetFilterBtn;
+    private URL location;
+
+    /**
+     * Initializes the controller class.
+     * <p>
+     * <a href="https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/Initializable.html">JavaFX Initialize</a>
+     * NOTE This interface has been superseded by automatic injection of location and resources properties into the controller.
+     * FXMLLoader will now automatically call any suitably annotated no-arg initialize() method defined by the controller.
+     * It is recommended that the injection approach be used whenever possible.
+     */
+    @FXML
+    private ResourceBundle resources;
+
+    @FXML
+    private TextField searchField;
 
     @FXML
     private JFXButton searchBtn;
+
+    @FXML
+    private JFXButton resetFilterBtn;
 
     @FXML
     private JFXButton sortBtn;
 
     private static final String SORT_DEFAULT_TEXT_ASC = "Sort (asc)";
     private static final String SORT_DEFAULT_TEXT_DESC = "Sort (desc)";
-
-    @FXML
-    private TextField searchField;
 
     @FXML
     private JFXComboBox<Genre> genreComboBox;
@@ -52,8 +74,15 @@ public class HomeController implements Initializable {
 
     private final FilteredList<Movie> filteredMovies = new FilteredList<>(observableMovies);
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    /**
+     * Initializes the controller class.
+     * <p>
+     * <a href="https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/Initializable.html">JavaFX Initialize</a>
+     * NOTE This interface has been superseded by automatic injection of location and resources properties into the controller.
+     * FXMLLoader will now automatically call any suitably annotated no-arg initialize() method defined by the controller.
+     * It is recommended that the injection approach be used whenever possible.
+     */
+    public void initialize() {
         List<Movie> allMovies;
 
         try {
