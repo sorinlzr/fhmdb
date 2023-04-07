@@ -23,14 +23,14 @@ public enum Genre {
     WAR("War"),
     WESTERN("Western");
 
-    private final String genre;
+    private final String value;
 
-    Genre(String genre){
-        this.genre = genre;
+    Genre(String value){
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        return genre;
+        return value;
     }
 }

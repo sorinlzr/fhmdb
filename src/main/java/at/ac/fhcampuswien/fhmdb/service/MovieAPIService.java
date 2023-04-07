@@ -16,6 +16,10 @@ public class MovieAPIService {
 
     private static final String API = "https://prog2.fh-campuswien.ac.at/";
 
+    private MovieAPIService() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static List<Movie> getMovies() throws IOException {
         Request request = new Request.Builder()
                 .url(API.concat("movies"))

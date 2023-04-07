@@ -13,7 +13,7 @@ public enum Rating {
     RATING_1_TO_MAX(1.0),
     RATING_0_TO_MAX(0.0);
 
-    private static final double maxRating = 10.0;
+    private static final double MAX_RATING = 10.0;
     private final double ratingFrom;
 
     public double getRatingFrom() {
@@ -28,6 +28,6 @@ public enum Rating {
     public String toString() {
         if (this == NO_FILTER) return "Filter by Rating";
 
-        return String.format("%.1f to %.1f stars", ratingFrom, maxRating);
+        return String.format("%.1f to %.1f stars", ratingFrom, MAX_RATING);
     }
 }

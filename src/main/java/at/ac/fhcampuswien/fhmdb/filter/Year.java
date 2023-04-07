@@ -97,14 +97,14 @@ public enum Year {
     YEAR_1931("1931"),
     YEAR_1930("1930");
 
-    private final String year;
+    private final String value;
 
-    Year(String year) {
-        this.year = year;
+    Year(String value) {
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        return year;
+        return value;
     }
 }
