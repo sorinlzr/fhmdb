@@ -117,7 +117,6 @@ public class HomeController implements Initializable {
 
     public String getMostPopularActor(List<Movie> movies) {
         return movies.stream()
-                // convert every main cast into a separate stream and flatten the main cast of all movies into a single stream
                 .flatMap(movie -> movie.getMainCast().stream())
 
                 // Group actors by their name and count their occurrences using the Collectors.groupingBy method
@@ -126,8 +125,8 @@ public class HomeController implements Initializable {
                 // Create a stream of the entry set of the grouped actors
                 .entrySet().stream()
 
-                // Find the actor with the maximum count using the comparingByValue method of the Map.Entry
-                .max(Map.Entry.comparingByValue())
+                // Find the actor with the maximum count using a custom comparator
+                .max((e1, e2) -> e1.getValue().equals(e2.getValue()) ? -1 : e1.getValue().compareTo(e2.getValue()))
 
                 // Get the name of the most popular actor by mapping the entry to its key (actor name)
                 .map(Map.Entry::getKey)
@@ -135,6 +134,7 @@ public class HomeController implements Initializable {
                 // Return the name of the most popular actor or a default message if not found
                 .orElse("No popular actor found");
     }
+
 
     public int getLongestMovieTitle(List<Movie> movies) {
         return movies.stream()
