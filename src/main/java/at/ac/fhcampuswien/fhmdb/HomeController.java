@@ -125,8 +125,8 @@ public class HomeController implements Initializable {
                 // Create a stream of the entry set of the grouped actors
                 .entrySet().stream()
 
-                // Find the actor with the maximum count using a custom comparator
-                .max((e1, e2) -> e1.getValue().equals(e2.getValue()) ? -1 : e1.getValue().compareTo(e2.getValue()))
+                // Find the actor with the maximum count using an optimized custom comparator
+                .max((e1, e2) -> Long.compare(e1.getValue(), e2.getValue()) != 0 ? Long.compare(e1.getValue(), e2.getValue()) : -1)
 
                 // Get the name of the most popular actor by mapping the entry to its key (actor name)
                 .map(Map.Entry::getKey)
