@@ -113,4 +113,57 @@ public class HomeController implements Initializable {
                 .mapToObj(i -> currentYear - i)
                 .collect(Collectors.toList());
     }
+
+
+    public String getMostPopularActor(List<Movie> movies) {
+        return movies.stream()
+                .flatMap(movie -> movie.getMainCast().stream())
+
+                // Group actors by their name and count their occurrences using the Collectors.groupingBy method
+                .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()))
+
+                // Create a stream of the entry set of the grouped actors
+                .entrySet().stream()
+
+                // Find the actor with the maximum count using an optimized custom comparator
+                .max((e1, e2) -> Long.compare(e1.getValue(), e2.getValue()) != 0 ? Long.compare(e1.getValue(), e2.getValue()) : -1)
+
+                // Get the name of the most popular actor by mapping the entry to its key (actor name)
+                .map(Map.Entry::getKey)
+
+                // Return the name of the most popular actor or a default message if not found
+                .orElse("No popular actor found");
+    }
+
+
+    public int getLongestMovieTitle(List<Movie> movies) {
+        return movies.stream()
+                // Get the movie with the longest title by comparing the length of the titles using a Comparator (a functional interface that compares two objects)
+                .max(Comparator.comparingInt(movie -> movie.getTitle().length()))
+
+                // Get the length of the longest title by mapping the movie object to the length of its title
+                .map(movie -> movie.getTitle().length())
+
+                // Return the length of the longest title, or return 0 if the list is empty
+                .orElse(0);
+    }
+
+    // Returns the number of movies directed by the given director
+    public long countMoviesFrom(List<Movie> movies, String director) {
+        return movies.stream()
+                // Filter the movies directed by the given director using the contains method on the list of directors
+                .filter(movie -> movie.getDirectors().contains(director))
+
+                // Count the filtered movies and return the result (count() always returns long)
+                .count();
+    }
+
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+        return movies.stream()
+                // Filter the movies released between the given years using a logical AND condition
+                .filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)
+
+                // Collect the filtered movies into a list and return the result
+                .collect(Collectors.toList());
+    }
 }
