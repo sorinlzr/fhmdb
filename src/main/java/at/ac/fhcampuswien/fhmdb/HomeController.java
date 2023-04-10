@@ -50,15 +50,7 @@ public class HomeController {
     private final ObservableList<Movie> movies = FXCollections.observableArrayList();
 
     public void initialize() {
-        List<Movie> allMovies;
-
-        try {
-            allMovies = MovieAPIService.getMovies();
-        } catch (IOException e){
-            allMovies = new ArrayList<>();
-        }
-
-        movies.addAll(allMovies);
+        movies.addAll(getAllMoviesOrEmptyList());
         sortMovies();
 
         movieListView.setItems(movies);
@@ -98,15 +90,7 @@ public class HomeController {
         releaseYearPicker.setValue(Year.NO_FILTER);
         ratingComboBox.setValue(Rating.NO_FILTER);
 
-        List<Movie> allMovies;
-
-        try {
-            allMovies = MovieAPIService.getMovies();
-        } catch (IOException e){
-            allMovies = new ArrayList<>();
-        }
-
-        movies.addAll(allMovies);
+        movies.addAll(getAllMoviesOrEmptyList());
         sortMovies();
     }
 
@@ -135,5 +119,17 @@ public class HomeController {
         } else {
             movies.sort(Comparator.naturalOrder());
         }
+    }
+
+    private List<Movie> getAllMoviesOrEmptyList() {
+        List<Movie> allMovies;
+
+        try {
+            allMovies = MovieAPIService.getMovies();
+        } catch (IOException e){
+            allMovies = new ArrayList<>();
+        }
+
+        return allMovies;
     }
 }
