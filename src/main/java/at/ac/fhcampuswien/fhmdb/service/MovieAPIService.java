@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.fhmdb.service;
 
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -31,11 +32,18 @@ public class MovieAPIService {
     }
 
     public static List<Movie> getMoviesBy(String text, String genre, String releaseYear, String ratingFrom) throws IOException {
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme("https")
+                .host("prog2.fh-campuswien.ac.at")
+                .addPathSegment("movies")
+                .addQueryParameter("query", text)
+                .addQueryParameter("genre", genre)
+                .addQueryParameter("releaseYear", releaseYear)
+                .addQueryParameter("ratingFrom", ratingFrom)
+                .build();
+
         Request request = new Request.Builder()
-                .url(API.concat("movies?query=").concat(text)
-                        .concat("&genre=").concat(genre)
-                        .concat("&releaseYear=").concat(releaseYear)
-                        .concat("&ratingFrom=").concat(ratingFrom))
+                .url(url)
                 .header("User-Agent", "http.agent")
                 .method("GET", null)
                 .build();
@@ -46,19 +54,15 @@ public class MovieAPIService {
     private static List<Movie> makeMovieRequest(Request request) throws IOException {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
 
-        Response response = client.newCall(request).execute();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.body() != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                Movie[] movies = mapper.readValue(response.body().string(), Movie[].class);
 
-        if (response.body() != null){
-            ObjectMapper mapper = new ObjectMapper();
-            Movie[] movies = mapper.readValue(response.body().string(), Movie[].class);
+                return List.of(movies);
+            }
 
-            response.close();
-
-            return List.of(movies);
+            return new ArrayList<>();
         }
-
-        response.close();
-
-        return new ArrayList<>();
     }
 }

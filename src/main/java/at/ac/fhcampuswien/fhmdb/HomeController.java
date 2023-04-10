@@ -11,38 +11,13 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 
 public class HomeController {
-
-    /**
-     * Initializes the controller class.
-     * <p>
-     * <a href="https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/Initializable.html">JavaFX Initialize</a>
-     * NOTE This interface has been superseded by automatic injection of location and resources properties into the controller.
-     * FXMLLoader will now automatically call any suitably annotated no-arg initialize() method defined by the controller.
-     * It is recommended that the injection approach be used whenever possible.
-     */
-    @FXML
-    private URL location;
-
-    /**
-     * Initializes the controller class.
-     * <p>
-     * <a href="https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/Initializable.html">JavaFX Initialize</a>
-     * NOTE This interface has been superseded by automatic injection of location and resources properties into the controller.
-     * FXMLLoader will now automatically call any suitably annotated no-arg initialize() method defined by the controller.
-     * It is recommended that the injection approach be used whenever possible.
-     */
-    @FXML
-    private ResourceBundle resources;
-
     @FXML
     private TextField searchField;
 
@@ -70,18 +45,8 @@ public class HomeController {
     @FXML
     private JFXListView<Movie> movieListView;
 
-    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
+    private final ObservableList<Movie> movies = FXCollections.observableArrayList();
 
-    private final FilteredList<Movie> filteredMovies = new FilteredList<>(observableMovies);
-
-    /**
-     * Initializes the controller class.
-     * <p>
-     * <a href="https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/Initializable.html">JavaFX Initialize</a>
-     * NOTE This interface has been superseded by automatic injection of location and resources properties into the controller.
-     * FXMLLoader will now automatically call any suitably annotated no-arg initialize() method defined by the controller.
-     * It is recommended that the injection approach be used whenever possible.
-     */
     public void initialize() {
         List<Movie> allMovies;
 
@@ -91,10 +56,10 @@ public class HomeController {
             allMovies = new ArrayList<>();
         }
 
-        observableMovies.addAll(allMovies);
+        movies.addAll(allMovies);
         sortMovies();
 
-        movieListView.setItems(filteredMovies);
+        movieListView.setItems(movies);
         movieListView.setCellFactory(e -> new MovieCell());
 
         genreComboBox.getItems().addAll(Genre.values());
@@ -107,12 +72,22 @@ public class HomeController {
         ratingComboBox.setValue(Rating.NO_FILTER);
 
         searchBtn.setOnAction(actionEvent -> setFilter());
-        sortBtn.setOnAction(actionEvent -> sortMoviesAndSetButtonText());
+
+        sortBtn.setOnAction(actionEvent -> {
+            if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
+                sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
+            } else {
+                sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
+            }
+
+            sortMovies();
+        });
+
         resetFilterBtn.setOnAction(actionEvent -> resetFilter());
     }
 
     private void resetFilter() {
-        observableMovies.clear();
+        movies.clear();
         searchField.clear();
 
         sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
@@ -129,18 +104,35 @@ public class HomeController {
             allMovies = new ArrayList<>();
         }
 
-        observableMovies.addAll(allMovies);
+        movies.addAll(allMovies);
         sortMovies();
     }
 
     private void setFilter() {
-        observableMovies.clear();
+        movies.clear();
 
         List<Movie> moviesWithFilter;
 
-        String genre = genreComboBox.getValue() == Genre.NO_FILTER ? "" : genreComboBox.getValue().name();
-        String releaseYear = releaseYearPicker.getValue() == Year.NO_FILTER ? "" : releaseYearPicker.getValue().toString();
-        String ratingFrom = ratingComboBox.getValue() == Rating.NO_FILTER ? "" : String.valueOf(ratingComboBox.getValue().getRatingFrom());
+        String genre;
+        if (genreComboBox.getValue() == Genre.NO_FILTER) {
+            genre = "";
+        } else {
+            genre = genreComboBox.getValue().name();
+        }
+
+        String releaseYear;
+        if (releaseYearPicker.getValue() == Year.NO_FILTER) {
+            releaseYear = "";
+        } else {
+            releaseYear = releaseYearPicker.getValue().toString();
+        }
+
+        String ratingFrom;
+        if (ratingComboBox.getValue() == Rating.NO_FILTER) {
+            ratingFrom = "";
+        } else {
+            ratingFrom = String.valueOf(ratingComboBox.getValue().getRatingFrom());
+        }
 
         try {
             moviesWithFilter = MovieAPIService.getMoviesBy(searchField.getText(), genre, releaseYear, ratingFrom);
@@ -148,25 +140,15 @@ public class HomeController {
             moviesWithFilter = new ArrayList<>();
         }
 
-        observableMovies.addAll(moviesWithFilter);
+        movies.addAll(moviesWithFilter);
         sortMovies();
     }
 
     private void sortMovies(){
         if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
-            observableMovies.sort(Collections.reverseOrder());
+            movies.sort(Collections.reverseOrder());
         } else {
-            observableMovies.sort(Comparator.naturalOrder());
-        }
-    }
-
-    private void sortMoviesAndSetButtonText(){
-        if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
-            observableMovies.sort(Comparator.naturalOrder());
-            sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
-        } else {
-            observableMovies.sort(Collections.reverseOrder());
-            sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
+            movies.sort(Comparator.naturalOrder());
         }
     }
 }

@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -35,7 +36,7 @@ class HomeControllerTest {
     private static JFXComboBox<Year> releaseYearPicker;
     private static JFXComboBox<Rating> ratingComboBox;
     private static JFXListView<Movie> movieListView;
-    private static FilteredList<Movie> filteredMovies;
+    private static List<Movie> movies;
     private static HomeController homeController;
     private static MockedStatic<MovieAPIService> movieAPIServiceMockedStatic;
 
@@ -79,9 +80,13 @@ class HomeControllerTest {
             add(Genre.ADVENTURE);
         }});
 
-        ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
-        observableMovies.addAll(movie1, movie2, movie3, movie4, movie5);
-        filteredMovies = new FilteredList<>(observableMovies);
+        movies = new ArrayList<>() {{
+            add(movie1);
+            add(movie2);
+            add(movie3);
+            add(movie4);
+            add(movie5);
+        }};
     }
 
     @BeforeEach
@@ -190,10 +195,10 @@ class HomeControllerTest {
         @Test
         void Sets_movies_when_the_api_returns_movies() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
             //Arrange
-            movieAPIServiceMockedStatic.when(MovieAPIService::getMovies).thenReturn(filteredMovies);
+            movieAPIServiceMockedStatic.when(MovieAPIService::getMovies).thenReturn(movies);
 
-            Field filteredMovies = HomeController.class.getDeclaredField("filteredMovies");
-            filteredMovies.setAccessible(true);
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
 
             Method initialize = HomeController.class.getDeclaredMethod("initialize");
             initialize.setAccessible(true);
@@ -202,7 +207,7 @@ class HomeControllerTest {
             initialize.invoke(homeController);
 
             //Assert
-            assertEquals(5, ((FilteredList<Movie>) filteredMovies.get(homeController)).size());
+            assertEquals(5, ((ObservableList<Movie>) movies.get(homeController)).size());
         }
 
         @Test
@@ -210,8 +215,8 @@ class HomeControllerTest {
             //Arrange
             movieAPIServiceMockedStatic.when(MovieAPIService::getMovies).thenThrow(new IOException());
 
-            Field filteredMovies = HomeController.class.getDeclaredField("filteredMovies");
-            filteredMovies.setAccessible(true);
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
 
             Method initialize = HomeController.class.getDeclaredMethod("initialize");
             initialize.setAccessible(true);
@@ -220,7 +225,7 @@ class HomeControllerTest {
             initialize.invoke(homeController);
 
             //Assert
-            assertEquals(0, ((FilteredList<Movie>) filteredMovies.get(homeController)).size());
+            assertEquals(0, ((List<Movie>) movies.get(homeController)).size());
         }
     }
 
@@ -283,7 +288,7 @@ class HomeControllerTest {
         @Test
         void Resets_the_movie_selection_to_filled_movie_list_when_api_returns_movies() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
             //Arrange
-            movieAPIServiceMockedStatic.when(MovieAPIService::getMovies).thenReturn(filteredMovies);
+            movieAPIServiceMockedStatic.when(MovieAPIService::getMovies).thenReturn(movies);
 
             String searchCriteria = "story";
 
@@ -307,8 +312,8 @@ class HomeControllerTest {
             HomeControllerTest.ratingComboBox.setValue(Rating.NO_FILTER);
             ratingComboBox.set(homeController, HomeControllerTest.ratingComboBox);
 
-            Field filteredMovies = HomeController.class.getDeclaredField("filteredMovies");
-            filteredMovies.setAccessible(true);
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
 
             Method resetFilter = HomeController.class.getDeclaredMethod("resetFilter");
             resetFilter.setAccessible(true);
@@ -317,7 +322,7 @@ class HomeControllerTest {
             resetFilter.invoke(homeController);
 
             //Assert
-            assertEquals(5, ((FilteredList<Movie>) filteredMovies.get(homeController)).size());
+            assertEquals(5, ((ObservableList<Movie>) movies.get(homeController)).size());
         }
 
         @Test
@@ -347,8 +352,8 @@ class HomeControllerTest {
             HomeControllerTest.ratingComboBox.setValue(Rating.NO_FILTER);
             ratingComboBox.set(homeController, HomeControllerTest.ratingComboBox);
 
-            Field filteredMovies = HomeController.class.getDeclaredField("filteredMovies");
-            filteredMovies.setAccessible(true);
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
 
             Method resetFilter = HomeController.class.getDeclaredMethod("resetFilter");
             resetFilter.setAccessible(true);
@@ -357,7 +362,7 @@ class HomeControllerTest {
             resetFilter.invoke(homeController);
 
             //Assert
-            assertEquals(0, ((FilteredList<Movie>) filteredMovies.get(homeController)).size());
+            assertEquals(0, ((ObservableList<Movie>) movies.get(homeController)).size());
         }
 
         @Test
@@ -386,7 +391,7 @@ class HomeControllerTest {
         @Test
         void Sets_the_movie_selection_to_filled_movie_list_when_api_returns_movies() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
             //Arrange
-            movieAPIServiceMockedStatic.when(() -> MovieAPIService.getMoviesBy(anyString(), anyString(), anyString(), anyString())).thenReturn(filteredMovies);
+            movieAPIServiceMockedStatic.when(() -> MovieAPIService.getMoviesBy(anyString(), anyString(), anyString(), anyString())).thenReturn(movies);
 
             String searchCriteria = "story";
 
@@ -410,8 +415,8 @@ class HomeControllerTest {
             HomeControllerTest.ratingComboBox.setValue(Rating.NO_FILTER);
             ratingComboBox.set(homeController, HomeControllerTest.ratingComboBox);
 
-            Field filteredMovies = HomeController.class.getDeclaredField("filteredMovies");
-            filteredMovies.setAccessible(true);
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
 
             Method setFilter = HomeController.class.getDeclaredMethod("setFilter");
             setFilter.setAccessible(true);
@@ -420,7 +425,7 @@ class HomeControllerTest {
             setFilter.invoke(homeController);
 
             //Assert
-            assertEquals(5, ((FilteredList<Movie>) filteredMovies.get(homeController)).size());
+            assertEquals(5, ((ObservableList<Movie>) movies.get(homeController)).size());
         }
 
         @Test
@@ -450,8 +455,8 @@ class HomeControllerTest {
             HomeControllerTest.ratingComboBox.setValue(Rating.NO_FILTER);
             ratingComboBox.set(homeController, HomeControllerTest.ratingComboBox);
 
-            Field filteredMovies = HomeController.class.getDeclaredField("filteredMovies");
-            filteredMovies.setAccessible(true);
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
 
             Method setFilter = HomeController.class.getDeclaredMethod("setFilter");
             setFilter.setAccessible(true);
@@ -460,7 +465,7 @@ class HomeControllerTest {
             setFilter.invoke(homeController);
 
             //Assert
-            assertEquals(0, ((FilteredList<Movie>) filteredMovies.get(homeController)).size());
+            assertEquals(0, ((ObservableList<Movie>) movies.get(homeController)).size());
         }
     }
 }
