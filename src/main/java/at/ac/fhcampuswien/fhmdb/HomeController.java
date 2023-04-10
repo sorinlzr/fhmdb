@@ -42,6 +42,8 @@ public class HomeController {
     @FXML
     private JFXComboBox<Rating> ratingComboBox;
 
+    private static final String NO_FILTER = "";
+
     @FXML
     private JFXListView<Movie> movieListView;
 
@@ -113,26 +115,9 @@ public class HomeController {
 
         List<Movie> moviesWithFilter;
 
-        String genre;
-        if (genreComboBox.getValue() == Genre.NO_FILTER) {
-            genre = "";
-        } else {
-            genre = genreComboBox.getValue().name();
-        }
-
-        String releaseYear;
-        if (releaseYearPicker.getValue() == Year.NO_FILTER) {
-            releaseYear = "";
-        } else {
-            releaseYear = releaseYearPicker.getValue().toString();
-        }
-
-        String ratingFrom;
-        if (ratingComboBox.getValue() == Rating.NO_FILTER) {
-            ratingFrom = "";
-        } else {
-            ratingFrom = String.valueOf(ratingComboBox.getValue().getRatingFrom());
-        }
+        String genre = genreComboBox.getValue() == Genre.NO_FILTER ? NO_FILTER : genreComboBox.getValue().name();
+        String releaseYear = releaseYearPicker.getValue() == Year.NO_FILTER ? NO_FILTER : releaseYearPicker.getValue().toString();
+        String ratingFrom = ratingComboBox.getValue() == Rating.NO_FILTER ? NO_FILTER : String.valueOf(ratingComboBox.getValue().getRatingFrom());
 
         try {
             moviesWithFilter = MovieAPIService.getMoviesBy(searchField.getText(), genre, releaseYear, ratingFrom);
