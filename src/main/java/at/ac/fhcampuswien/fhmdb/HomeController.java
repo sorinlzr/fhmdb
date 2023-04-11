@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HomeController {
     @FXML
