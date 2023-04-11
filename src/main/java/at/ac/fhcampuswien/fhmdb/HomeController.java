@@ -1,9 +1,9 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.models.RatingOption;
-import at.ac.fhcampuswien.fhmdb.service.MovieFilterService;
-import at.ac.fhcampuswien.fhmdb.service.MovieSearchService;
-import at.ac.fhcampuswien.fhmdb.models.Genre;
+import at.ac.fhcampuswien.fhmdb.filter.Rating;
+import at.ac.fhcampuswien.fhmdb.filter.Year;
+import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
+import at.ac.fhcampuswien.fhmdb.filter.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
@@ -11,107 +11,126 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
-import java.net.URL;
+import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-public class HomeController implements Initializable {
+public class HomeController {
     @FXML
-    public JFXButton resetFilterBtn;
+    private TextField searchField;
 
     @FXML
-    public JFXButton searchBtn;
+    private JFXButton searchBtn;
 
     @FXML
-    public TextField searchField;
+    private JFXButton resetFilterBtn;
 
     @FXML
-    public JFXListView<Movie> movieListView;
+    private JFXButton sortBtn;
+
+    private static final String SORT_DEFAULT_TEXT_ASC = "Sort (asc)";
+    private static final String SORT_DEFAULT_TEXT_DESC = "Sort (desc)";
 
     @FXML
-    public JFXComboBox<Genre> genreComboBox;
+    private JFXComboBox<Genre> genreComboBox;
 
     @FXML
-    public JFXComboBox<Integer> releaseYearPicker;
+    private JFXComboBox<Year> releaseYearPicker;
 
     @FXML
-    public JFXComboBox<RatingOption> ratingComboBox;
+    private JFXComboBox<Rating> ratingComboBox;
+
+    private static final String NO_FILTER = "";
 
     @FXML
-    public JFXButton sortBtn;
+    private JFXListView<Movie> movieListView;
 
-    public List<Movie> allMovies = Movie.initializeMovies();
+    private final ObservableList<Movie> movies = FXCollections.observableArrayList();
 
-    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
-    private final FilteredList<Movie> filteredList = new FilteredList<>(observableMovies);
+    public void initialize() {
+        movies.addAll(getAllMoviesOrEmptyList());
+        sortMovies();
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        observableMovies.addAll(allMovies);
+        movieListView.setItems(movies);
+        movieListView.setCellFactory(e -> new MovieCell());
 
-        movieListView.setItems(filteredList);
-        movieListView.setCellFactory(movieListView -> new MovieCell());
-
-        genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
+        genreComboBox.setValue(Genre.NO_FILTER);
 
-        releaseYearPicker.setPromptText("Filter by Release Year");
-        releaseYearPicker.getItems().addAll(getYears());
+        releaseYearPicker.getItems().addAll(Year.values());
+        releaseYearPicker.setValue(Year.NO_FILTER);
 
-        ratingComboBox.setPromptText("Filter by Rating");
-        ratingComboBox.getItems().addAll(RatingOption.values());
+        ratingComboBox.getItems().addAll(Rating.values());
+        ratingComboBox.setValue(Rating.NO_FILTER);
 
-        searchBtn.setOnAction(actionEvent -> searchForMovie(searchField.getText().trim(), genreComboBox.getValue(), filteredList, observableMovies));
+        searchBtn.setOnAction(actionEvent -> setFilter());
 
         sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
-                observableMovies.sort(Comparator.naturalOrder());
-                sortBtn.setText("Sort (desc)");
+            if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
+                sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
             } else {
-                observableMovies.sort(Collections.reverseOrder());
-                sortBtn.setText("Sort (asc)");
+                sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
             }
+
+            sortMovies();
         });
 
-        resetFilterBtn.setOnAction(actionEvent -> resetFilterCriteria(genreComboBox, filteredList, searchField));
+        resetFilterBtn.setOnAction(actionEvent -> resetFilter());
     }
 
-    public static void resetFilterCriteria(JFXComboBox<Genre> genreComboBox,
-                                           FilteredList<Movie> filteredList,
-                                           TextField searchField) {
+    private void resetFilter() {
+        movies.clear();
         searchField.clear();
-        genreComboBox.setValue(Genre.ALL);
-        if (genreComboBox.getValue() != null) {
-            genreComboBox.getSelectionModel().clearSelection();
-        }
-        filteredList.setPredicate(movie -> true);
+
+        sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
+
+        genreComboBox.setValue(Genre.NO_FILTER);
+        releaseYearPicker.setValue(Year.NO_FILTER);
+        ratingComboBox.setValue(Rating.NO_FILTER);
+
+        movies.addAll(getAllMoviesOrEmptyList());
+        sortMovies();
     }
 
-    public static void searchForMovie(String searchTerm, Genre genre, FilteredList<Movie> filteredList, List<Movie> movies) {
-        Set<Movie> searchResults = new HashSet<>();
-        Set<Movie> keywordSearchResults = MovieSearchService.searchKeyword(searchTerm, movies);
-        List<Movie> genreSearchResults = MovieFilterService.filterMoviesByGenre(genre, movies);
+    private void setFilter() {
+        movies.clear();
 
-        for (Movie movie : keywordSearchResults) {
-            if (genreSearchResults.contains(movie)) {
-                searchResults.add(movie);
-            }
+        List<Movie> moviesWithFilter;
+
+        String genre = genreComboBox.getValue() == Genre.NO_FILTER ? NO_FILTER : genreComboBox.getValue().name();
+        String releaseYear = releaseYearPicker.getValue() == Year.NO_FILTER ? NO_FILTER : releaseYearPicker.getValue().toString();
+        String ratingFrom = ratingComboBox.getValue() == Rating.NO_FILTER ? NO_FILTER : String.valueOf(ratingComboBox.getValue().getRatingFrom());
+
+        try {
+            moviesWithFilter = MovieAPIService.getMoviesBy(searchField.getText(), genre, releaseYear, ratingFrom);
+        } catch (IOException e){
+            moviesWithFilter = new ArrayList<>();
         }
 
-        filteredList.setPredicate(searchResults::contains);
+        movies.addAll(moviesWithFilter);
+        sortMovies();
     }
 
-    private List<Integer> getYears() {
-        int currentYear = java.time.LocalDate.now().getYear();
-        return IntStream.rangeClosed(0, 80)
-                .mapToObj(i -> currentYear - i)
-                .collect(Collectors.toList());
+    private void sortMovies(){
+        if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
+            movies.sort(Collections.reverseOrder());
+        } else {
+            movies.sort(Comparator.naturalOrder());
+        }
+    }
+
+    private List<Movie> getAllMoviesOrEmptyList() {
+        List<Movie> allMovies;
+
+        try {
+            allMovies = MovieAPIService.getMovies();
+        } catch (IOException e){
+            allMovies = new ArrayList<>();
+        }
+
+        return allMovies;
     }
 
 

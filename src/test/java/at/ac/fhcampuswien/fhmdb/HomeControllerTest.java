@@ -1,34 +1,44 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.models.Genre;
+import at.ac.fhcampuswien.fhmdb.filter.Genre;
+import at.ac.fhcampuswien.fhmdb.filter.Rating;
+import at.ac.fhcampuswien.fhmdb.filter.Year;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.TextField;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 
 class HomeControllerTest {
 
-    static Movie movie1;
-    static Movie movie2;
-    static Movie movie3;
-    static Movie movie4;
-    static Movie movie5;
-    static ObservableList<Movie> observableMovies;
-
-    public HomeController homeController;
-
-    public TextField searchField;
-    public JFXComboBox<Genre> genreComboBox;
-    public FilteredList<Movie> filteredList;
+    private static TextField searchField;
+    private static JFXButton searchBtn;
+    private static JFXButton resetFilterBtn;
+    private static JFXButton sortBtn;
+    private static JFXComboBox<Genre> genreComboBox;
+    private static JFXComboBox<Year> releaseYearPicker;
+    private static JFXComboBox<Rating> ratingComboBox;
+    private static JFXListView<Movie> movieListView;
+    private static List<Movie> movies;
+    private static HomeController homeController;
+    private static MockedStatic<MovieAPIService> movieAPIServiceMockedStatic;
 
     @BeforeAll
     public static void beforeAll() {
@@ -38,164 +48,424 @@ class HomeControllerTest {
         // 3 movies with the same genre
         // 2 movies with the word "story" in their description
         // 1 movie with the word "story" and the genre "Action"
+        // 1 movie with the word "story" and the genre "Fantasy"
 
-        movie1 = new Movie("Die Hard", "A story about a man who can't seem to die");
-        movie1.addGenre(Genre.ACTION);
-        movie1.addGenre(Genre.DRAMA);
+        Movie movie1 = new Movie("1", "Die Hard", "A story about a man who can't seem to die");
+        movie1.setGenres(new ArrayList<>() {{
+            add(Genre.ACTION);
+            add(Genre.DRAMA);
+        }});
 
-        movie2 = new Movie("Rush Hour", "Two detectives, one throws punches as fast as the other one can talk");
-        movie2.addGenre(Genre.ACTION);
-        movie2.addGenre(Genre.COMEDY);
+        Movie movie2 = new Movie("2", "Rush Hour", "Two detectives, one throws punches as fast as the other one can talk");
+        movie2.setGenres(new ArrayList<>() {{
+            add(Genre.ACTION);
+            add(Genre.COMEDY);
+        }});
 
-        movie3 = new Movie("Independence Day", "A movie inspired by true events");
-        movie3.addGenre(Genre.SCIENCE_FICTION);
-        movie3.addGenre(Genre.DOCUMENTARY);
+        Movie movie3 = new Movie("3", "Independence Day", "A movie inspired by true events");
+        movie3.setGenres(new ArrayList<>() {{
+            add(Genre.SCIENCE_FICTION);
+            add(Genre.DOCUMENTARY);
+        }});
 
-        movie4 = new Movie("Star Trek", "Beam me up, Scotty! - Ay ay captain!");
-        movie4.addGenre(Genre.ACTION);
-        movie4.addGenre(Genre.SCIENCE_FICTION);
+        Movie movie4 = new Movie("4", "Star Trek", "Beam me up, Scotty! - Ay ay captain!");
+        movie4.setGenres(new ArrayList<>() {{
+            add(Genre.ACTION);
+            add(Genre.SCIENCE_FICTION);
+        }});
 
-        movie5 = new Movie("Lord of the rings", "A story of an odd group that spends around 9 hours returning jewelry");
-        movie5.addGenre(Genre.FANTASY);
-        movie5.addGenre(Genre.ADVENTURE);
+        Movie movie5 = new Movie("5", "Lord of the rings", "A story of an odd group that spends around 9 hours returning jewelry");
+        movie5.setGenres(new ArrayList<>() {{
+            add(Genre.FANTASY);
+            add(Genre.ADVENTURE);
+        }});
 
-        observableMovies = FXCollections.observableArrayList();
-        observableMovies.addAll(movie1, movie2, movie3, movie4, movie5);
+        movies = new ArrayList<>() {{
+            add(movie1);
+            add(movie2);
+            add(movie3);
+            add(movie4);
+            add(movie5);
+        }};
     }
 
     @BeforeEach
-    void setUp() {
-        searchField = new TextField();
-        genreComboBox = new JFXComboBox<>();
-        filteredList = new FilteredList<>(observableMovies);
+    void setUp() throws NoSuchFieldException, IllegalAccessException {
         homeController = new HomeController();
+
+        HomeControllerTest.searchBtn = new JFXButton();
+        HomeControllerTest.resetFilterBtn = new JFXButton();
+        HomeControllerTest.sortBtn = new JFXButton();
+        HomeControllerTest.searchField = new TextField();
+        HomeControllerTest.genreComboBox = new JFXComboBox<>();
+        HomeControllerTest.releaseYearPicker = new JFXComboBox<>();
+        HomeControllerTest.ratingComboBox = new JFXComboBox<>();
+        HomeControllerTest.movieListView = new JFXListView<>();
+
+        Field searchBtn = HomeController.class.getDeclaredField("searchBtn");
+        searchBtn.setAccessible(true);
+        searchBtn.set(homeController, HomeControllerTest.searchBtn);
+
+        Field resetFilterBtn = HomeController.class.getDeclaredField("resetFilterBtn");
+        resetFilterBtn.setAccessible(true);
+        resetFilterBtn.set(homeController, HomeControllerTest.resetFilterBtn);
+
+        Field sortBtn = HomeController.class.getDeclaredField("sortBtn");
+        sortBtn.setAccessible(true);
+        sortBtn.set(homeController, HomeControllerTest.sortBtn);
+
+        Field searchField = HomeController.class.getDeclaredField("searchField");
+        searchField.setAccessible(true);
+        searchField.set(homeController, HomeControllerTest.searchField);
+
+        Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
+        genreComboBox.setAccessible(true);
+        genreComboBox.set(homeController, HomeControllerTest.genreComboBox);
+
+        Field releaseYearPicker = HomeController.class.getDeclaredField("releaseYearPicker");
+        releaseYearPicker.setAccessible(true);
+        releaseYearPicker.set(homeController, HomeControllerTest.releaseYearPicker);
+
+        Field ratingComboBox = HomeController.class.getDeclaredField("ratingComboBox");
+        ratingComboBox.setAccessible(true);
+        ratingComboBox.set(homeController, HomeControllerTest.ratingComboBox);
+
+        Field movieListView = HomeController.class.getDeclaredField("movieListView");
+        movieListView.setAccessible(true);
+        movieListView.set(homeController, HomeControllerTest.movieListView);
+
+        movieAPIServiceMockedStatic = Mockito.mockStatic(MovieAPIService.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        movieAPIServiceMockedStatic.close();
     }
 
     @Nested
-    public class GenreIsSelected {
+    class Initialize {
         @Test
-        public void whenGenreIsSelected_thenFilteredListShouldContainOnlyMoviesWithThatGenre() {
-            genreComboBox.setValue(Genre.ACTION);
+        void Sets_the_right_default_value_for_the_genre_filter() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
+            genreComboBox.setAccessible(true);
 
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
+            Method initialize = HomeController.class.getDeclaredMethod("initialize");
+            initialize.setAccessible(true);
 
-            assertEquals(5, observableMovies.size());
-            assertEquals(3, filteredList.size());
+            //Act
+            initialize.invoke(homeController);
+
+            //Assert
+            assertEquals(Genre.NO_FILTER, ((JFXComboBox<Genre>) genreComboBox.get(homeController)).getValue());
+        }
+
+        @Test
+        void Sets_the_right_default_value_for_the_release_year_filter() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            Field releaseYearPicker = HomeController.class.getDeclaredField("releaseYearPicker");
+            releaseYearPicker.setAccessible(true);
+
+            Method initialize = HomeController.class.getDeclaredMethod("initialize");
+            initialize.setAccessible(true);
+
+            //Act
+            initialize.invoke(homeController);
+
+            //Assert
+            assertEquals(Year.NO_FILTER, ((JFXComboBox<Year>) releaseYearPicker.get(homeController)).getValue());
+        }
+
+        @Test
+        void Sets_the_right_default_value_for_the_rating_filter() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            Field ratingComboBox = HomeController.class.getDeclaredField("ratingComboBox");
+            ratingComboBox.setAccessible(true);
+
+            Method initialize = HomeController.class.getDeclaredMethod("initialize");
+            initialize.setAccessible(true);
+
+            //Act
+            initialize.invoke(homeController);
+
+            //Assert
+            assertEquals(Rating.NO_FILTER, ((JFXComboBox<Rating>) ratingComboBox.get(homeController)).getValue());
+        }
+
+        @Test
+        void Sets_movies_when_the_api_returns_movies() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+            //Arrange
+            movieAPIServiceMockedStatic.when(MovieAPIService::getMovies).thenReturn(movies);
+
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
+
+            Method initialize = HomeController.class.getDeclaredMethod("initialize");
+            initialize.setAccessible(true);
+
+            //Act
+            initialize.invoke(homeController);
+
+            //Assert
+            assertEquals(5, ((ObservableList<Movie>) movies.get(homeController)).size());
+        }
+
+        @Test
+        void Sets_movies_to_an_empty_list_if_the_api_throws_an_exception() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+            //Arrange
+            movieAPIServiceMockedStatic.when(MovieAPIService::getMovies).thenThrow(new IOException());
+
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
+
+            Method initialize = HomeController.class.getDeclaredMethod("initialize");
+            initialize.setAccessible(true);
+
+            //Act
+            initialize.invoke(homeController);
+
+            //Assert
+            assertEquals(0, ((List<Movie>) movies.get(homeController)).size());
         }
     }
 
     @Nested
-    public class SearchFieldIsFilled {
+    class ResetFilter {
         @Test
-        public void whenSearchFieldIsFilled_thenFilteredListShouldContainOnlyMoviesThatMatchSearchCriteria() {
+        void Sets_the_right_default_value_for_the_genre_filter() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
+            genreComboBox.setAccessible(true);
+            HomeControllerTest.genreComboBox.setValue(Genre.ACTION);
+            genreComboBox.set(homeController, HomeControllerTest.genreComboBox);
+
+            Method resetFilter = HomeController.class.getDeclaredMethod("resetFilter");
+            resetFilter.setAccessible(true);
+
+            //Act
+            resetFilter.invoke(homeController);
+
+            //Assert
+            assertEquals(Genre.NO_FILTER, ((JFXComboBox<Genre>) genreComboBox.get(homeController)).getValue());
+        }
+
+        @Test
+        void Sets_the_right_default_value_for_the_release_year_filter() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            Field releaseYearPicker = HomeController.class.getDeclaredField("releaseYearPicker");
+            releaseYearPicker.setAccessible(true);
+            HomeControllerTest.releaseYearPicker.setValue(Year.YEAR_1982);
+            releaseYearPicker.set(homeController, HomeControllerTest.releaseYearPicker);
+
+            Method resetFilter = HomeController.class.getDeclaredMethod("resetFilter");
+            resetFilter.setAccessible(true);
+
+            //Act
+            resetFilter.invoke(homeController);
+
+            //Assert
+            assertEquals(Year.NO_FILTER, ((JFXComboBox<Year>) releaseYearPicker.get(homeController)).getValue());
+        }
+
+        @Test
+        void Sets_the_right_default_value_for_the_rating_filter() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            Field ratingComboBox = HomeController.class.getDeclaredField("ratingComboBox");
+            ratingComboBox.setAccessible(true);
+            HomeControllerTest.ratingComboBox.setValue(Rating.RATING_5_TO_MAX);
+            ratingComboBox.set(homeController, HomeControllerTest.ratingComboBox);
+
+            Method resetFilter = HomeController.class.getDeclaredMethod("resetFilter");
+            resetFilter.setAccessible(true);
+
+            //Act
+            resetFilter.invoke(homeController);
+
+            //Assert
+            assertEquals(Rating.NO_FILTER, ((JFXComboBox<Rating>) ratingComboBox.get(homeController)).getValue());
+        }
+
+        @Test
+        void Resets_the_movie_selection_to_filled_movie_list_when_api_returns_movies() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            movieAPIServiceMockedStatic.when(MovieAPIService::getMovies).thenReturn(movies);
+
             String searchCriteria = "story";
-            searchField.setText(searchCriteria);
 
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
+            Field searchField = HomeController.class.getDeclaredField("searchField");
+            searchField.setAccessible(true);
+            HomeControllerTest.searchField.setText(searchCriteria);
+            searchField.set(homeController, HomeControllerTest.searchField);
 
-            assertEquals(5, observableMovies.size());
-            assertEquals(2, filteredList.size());
-            assertEquals(searchCriteria, searchField.getText());
+            Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
+            genreComboBox.setAccessible(true);
+            HomeControllerTest.genreComboBox.setValue(Genre.NO_FILTER);
+            genreComboBox.set(homeController, HomeControllerTest.genreComboBox);
+
+            Field releaseYearPicker = HomeController.class.getDeclaredField("releaseYearPicker");
+            releaseYearPicker.setAccessible(true);
+            HomeControllerTest.releaseYearPicker.setValue(Year.NO_FILTER);
+            releaseYearPicker.set(homeController, HomeControllerTest.releaseYearPicker);
+
+            Field ratingComboBox = HomeController.class.getDeclaredField("ratingComboBox");
+            ratingComboBox.setAccessible(true);
+            HomeControllerTest.ratingComboBox.setValue(Rating.NO_FILTER);
+            ratingComboBox.set(homeController, HomeControllerTest.ratingComboBox);
+
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
+
+            Method resetFilter = HomeController.class.getDeclaredMethod("resetFilter");
+            resetFilter.setAccessible(true);
+
+            //Act
+            resetFilter.invoke(homeController);
+
+            //Assert
+            assertEquals(5, ((ObservableList<Movie>) movies.get(homeController)).size());
+        }
+
+        @Test
+        void Resets_the_movie_selection_to_empty_movie_list_when_api_throws_an_exception() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            movieAPIServiceMockedStatic.when(MovieAPIService::getMovies).thenThrow(new IOException());
+
+            String searchCriteria = "story";
+
+            Field searchField = HomeController.class.getDeclaredField("searchField");
+            searchField.setAccessible(true);
+            HomeControllerTest.searchField.setText(searchCriteria);
+            searchField.set(homeController, HomeControllerTest.searchField);
+
+            Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
+            genreComboBox.setAccessible(true);
+            HomeControllerTest.genreComboBox.setValue(Genre.NO_FILTER);
+            genreComboBox.set(homeController, HomeControllerTest.genreComboBox);
+
+            Field releaseYearPicker = HomeController.class.getDeclaredField("releaseYearPicker");
+            releaseYearPicker.setAccessible(true);
+            HomeControllerTest.releaseYearPicker.setValue(Year.NO_FILTER);
+            releaseYearPicker.set(homeController, HomeControllerTest.releaseYearPicker);
+
+            Field ratingComboBox = HomeController.class.getDeclaredField("ratingComboBox");
+            ratingComboBox.setAccessible(true);
+            HomeControllerTest.ratingComboBox.setValue(Rating.NO_FILTER);
+            ratingComboBox.set(homeController, HomeControllerTest.ratingComboBox);
+
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
+
+            Method resetFilter = HomeController.class.getDeclaredMethod("resetFilter");
+            resetFilter.setAccessible(true);
+
+            //Act
+            resetFilter.invoke(homeController);
+
+            //Assert
+            assertEquals(0, ((ObservableList<Movie>) movies.get(homeController)).size());
+        }
+
+        @Test
+        void Clears_the_search_field() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+            //Arrange
+            String searchCriteria = "story";
+
+            Field searchField = HomeController.class.getDeclaredField("searchField");
+            searchField.setAccessible(true);
+            HomeControllerTest.searchField.setText(searchCriteria);
+            searchField.set(homeController, HomeControllerTest.searchField);
+
+            Method resetFilter = HomeController.class.getDeclaredMethod("resetFilter");
+            resetFilter.setAccessible(true);
+
+            //Act
+            resetFilter.invoke(homeController);
+
+            //Assert
+            assertEquals("", ((TextField) searchField.get(homeController)).getText());
         }
     }
 
     @Nested
-    public class GenreIsSelectedAndSearchFieldIsFilled {
-        String searchCriteria = "story";
+    class SetFilter {
+        @Test
+        void Sets_the_movie_selection_to_filled_movie_list_when_api_returns_movies() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            movieAPIServiceMockedStatic.when(() -> MovieAPIService.getMoviesBy(anyString(), anyString(), anyString(), anyString())).thenReturn(movies);
 
-        @BeforeEach
-        void setUp() {
-            genreComboBox.setValue(Genre.ACTION);
-            searchField.setText(searchCriteria);
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
+            String searchCriteria = "story";
+
+            Field searchField = HomeController.class.getDeclaredField("searchField");
+            searchField.setAccessible(true);
+            HomeControllerTest.searchField.setText(searchCriteria);
+            searchField.set(homeController, HomeControllerTest.searchField);
+
+            Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
+            genreComboBox.setAccessible(true);
+            HomeControllerTest.genreComboBox.setValue(Genre.NO_FILTER);
+            genreComboBox.set(homeController, HomeControllerTest.genreComboBox);
+
+            Field releaseYearPicker = HomeController.class.getDeclaredField("releaseYearPicker");
+            releaseYearPicker.setAccessible(true);
+            HomeControllerTest.releaseYearPicker.setValue(Year.NO_FILTER);
+            releaseYearPicker.set(homeController, HomeControllerTest.releaseYearPicker);
+
+            Field ratingComboBox = HomeController.class.getDeclaredField("ratingComboBox");
+            ratingComboBox.setAccessible(true);
+            HomeControllerTest.ratingComboBox.setValue(Rating.NO_FILTER);
+            ratingComboBox.set(homeController, HomeControllerTest.ratingComboBox);
+
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
+
+            Method setFilter = HomeController.class.getDeclaredMethod("setFilter");
+            setFilter.setAccessible(true);
+
+            //Act
+            setFilter.invoke(homeController);
+
+            //Assert
+            assertEquals(5, ((ObservableList<Movie>) movies.get(homeController)).size());
         }
 
         @Test
-        public void filteredListShouldContainOnlyMoviesThatMatchSearchCriteriaAndGenre() {
-            assertEquals(5, observableMovies.size());
-            assertEquals(searchCriteria, searchField.getText());
-            for (Movie movie : filteredList) {
-                assertTrue(movie.getGenres().contains(genreComboBox.getValue()));
-            }
-            assertEquals(1, filteredList.size());
-        }
+        void Sets_the_movie_selection_to_empty_movie_list_when_api_throws_an_exception() throws NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+            //Arrange
+            movieAPIServiceMockedStatic.when(MovieAPIService::getMovies).thenThrow(new IOException());
 
-        @Test
-        public void whenGenreIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchSearchCriteria() {
-            assertEquals(5, observableMovies.size());
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
-            assertEquals(searchCriteria, searchField.getText());
-            assertEquals(1, filteredList.size());
-            genreComboBox.setValue(Genre.ALL);
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
-            assertEquals(2, filteredList.size());
-        }
+            String searchCriteria = "story";
 
-        @Test
-        public void whenSearchFieldIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchGenre() {
-            searchField.setText("");
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
-            assertEquals(3, filteredList.size());
-        }
+            Field searchField = HomeController.class.getDeclaredField("searchField");
+            searchField.setAccessible(true);
+            HomeControllerTest.searchField.setText(searchCriteria);
+            searchField.set(homeController, HomeControllerTest.searchField);
 
-        @Test
-        public void whenSearchFieldIsResetAndThenGenreIsReset_thenFilteredListShouldContainAllMovies() {
-            searchField.setText("");
-            genreComboBox.setValue(Genre.ALL);
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
-            assertEquals(5, filteredList.size());
+            Field genreComboBox = HomeController.class.getDeclaredField("genreComboBox");
+            genreComboBox.setAccessible(true);
+            HomeControllerTest.genreComboBox.setValue(Genre.NO_FILTER);
+            genreComboBox.set(homeController, HomeControllerTest.genreComboBox);
+
+            Field releaseYearPicker = HomeController.class.getDeclaredField("releaseYearPicker");
+            releaseYearPicker.setAccessible(true);
+            HomeControllerTest.releaseYearPicker.setValue(Year.NO_FILTER);
+            releaseYearPicker.set(homeController, HomeControllerTest.releaseYearPicker);
+
+            Field ratingComboBox = HomeController.class.getDeclaredField("ratingComboBox");
+            ratingComboBox.setAccessible(true);
+            HomeControllerTest.ratingComboBox.setValue(Rating.NO_FILTER);
+            ratingComboBox.set(homeController, HomeControllerTest.ratingComboBox);
+
+            Field movies = HomeController.class.getDeclaredField("movies");
+            movies.setAccessible(true);
+
+            Method setFilter = HomeController.class.getDeclaredMethod("setFilter");
+            setFilter.setAccessible(true);
+
+            //Act
+            setFilter.invoke(homeController);
+
+            //Assert
+            assertEquals(0, ((ObservableList<Movie>) movies.get(homeController)).size());
         }
     }
-
-    @Nested
-    public class SearchFieldIsFilledAndGenreIsSelected {
-        String searchCriteria = "story";
-        Genre genre = Genre.ACTION;
-
-        @BeforeEach
-        void setUp() {
-            searchField.setText(searchCriteria);
-            genreComboBox.setValue(genre);
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
-        }
-
-        @Test
-        public void filteredListShouldContainOnlyMoviesThatMatchSearchCriteriaAndGenre() {
-            assertEquals(5, observableMovies.size());
-            assertEquals(searchCriteria, searchField.getText());
-            for (Movie movie : filteredList) {
-                assertTrue(movie.getGenres().contains(genreComboBox.getValue()));
-            }
-            assertEquals(1, filteredList.size());
-        }
-
-        @Test
-        public void whenGenreIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchSearchCriteria() {
-            assertEquals(5, observableMovies.size());
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
-            assertEquals(searchCriteria, searchField.getText());
-            assertEquals(1, filteredList.size());
-            genreComboBox.setValue(Genre.ALL);
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
-            assertEquals(2, filteredList.size());
-        }
-
-        @Test
-        public void whenSearchFieldIsReset_thenFilteredListShouldContainOnlyMoviesThatMatchGenre() {
-            searchField.setText("");
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
-            assertEquals(3, filteredList.size());
-        }
-
-        @Test
-        public void whenSearchFieldIsResetAndThenGenreIsReset_thenFilteredListShouldContainAllMovies() {
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
-            assertEquals(1, filteredList.size());
-            searchField.setText("");
-            genreComboBox.setValue(Genre.ALL);
-            HomeController.searchForMovie(searchField.getText(), genreComboBox.getValue(), filteredList, observableMovies);
-            assertEquals(5, filteredList.size());
-        }
-    }
-
 }
