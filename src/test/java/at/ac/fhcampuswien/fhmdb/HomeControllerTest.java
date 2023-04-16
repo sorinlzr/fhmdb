@@ -165,50 +165,95 @@ class HomeControllerTest {
         movieAPIServiceMockedStatic.close();
     }
 
-    // Streams test
     @Nested
-    class StreamsTest{
+    class GetMostPopularActor {
         @Test
-        void testGetMostPopularActor() {
+        void Gets_the_right_actor() {
+            // Arrange takes place is in beforeAll
 
+            // Act
             String mostPopularActor = homeController.getMostPopularActor(streamTestMovies);
 
+            // Assert
             assertEquals("Zachary Quinto", mostPopularActor);
         }
+    }
 
+    @Nested
+    class GetLongestMovieTitle {
         @Test
-        void testGetLongestMovieTitle() {
+        void Gets_the_correct_length() {
+            // Arrange is in beforeAll
 
+            // Act
             int longestMovieTitle = homeController.getLongestMovieTitle(streamTestMovies);
 
+            // Assert
             assertEquals(17, longestMovieTitle);
         }
+    }
 
+    @Nested
+    class CountMoviesFromSelectedDirector {
         @Test
-        void testCountMoviesFrom() {
+        void Counts_correctly_for_existing_director() {
+            // Arrange takes place is in beforeAll
 
+            // Act
             long moviesFromJohnMcTiernan = homeController.countMoviesFrom(streamTestMovies, "John McTiernan");
-            long moviesFromNonExistentDirector = homeController.countMoviesFrom(streamTestMovies, "Non-existent Director");
 
+            // Assert
             assertEquals(1, moviesFromJohnMcTiernan);
-            assertEquals(0, moviesFromNonExistentDirector);
         }
 
         @Test
-        void testGetMoviesBetweenYears() {
+        void Counts_correctly_for_non_existent_director() {
+            // Arrange takes place is in beforeAll
 
+            // Act
+            long moviesFromNonExistentDirector = homeController.countMoviesFrom(streamTestMovies, "Non-existent Director");
+
+            // Assert
+            assertEquals(0, moviesFromNonExistentDirector);
+        }
+    }
+
+    @Nested
+    class GetMoviesBetweenYears {
+        @Test
+        void Gets_correct_movies_between_1988_and_1998() {
+            // Arrange takes place is in beforeAll
+
+            // Act
             List<Movie> moviesBetween1988And1998 = homeController.getMoviesBetweenYears(streamTestMovies, 1988, 1998);
+
+            // Assert
+            assertEquals(3, moviesBetween1988And1998.size());
+        }
+
+        @Test
+        void Gets_correct_movies_between_2000_and_2010() {
+            // Arrange takes place is in beforeAll
+
+            // Act
             List<Movie> moviesBetween2000And2010 = homeController.getMoviesBetweenYears(streamTestMovies, 2000, 2010);
+
+            // Assert
+            assertEquals(2, moviesBetween2000And2010.size());
+        }
+
+        @Test
+        void Gets_correct_movies_between_2020_and_2030() {
+            // Arrange takes place is in beforeAll
+
+            // Act
             List<Movie> moviesBetween2020And2030 = homeController.getMoviesBetweenYears(streamTestMovies, 2020, 2030);
 
-            assertEquals(3, moviesBetween1988And1998.size());
-            assertEquals(2, moviesBetween2000And2010.size());
+            // Assert
             assertEquals(0, moviesBetween2020And2030.size());
         }
     }
 
-
-    //
     @Nested
     class Initialize {
         @Test
