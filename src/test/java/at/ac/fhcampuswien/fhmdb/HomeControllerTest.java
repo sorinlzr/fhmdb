@@ -39,6 +39,7 @@ class HomeControllerTest {
     private static List<Movie> movies;
     private static HomeController homeController;
     private static MockedStatic<MovieAPIService> movieAPIServiceMockedStatic;
+    private static List<Movie> streamTestMovies;
 
     @BeforeAll
     public static void beforeAll() {
@@ -87,6 +88,28 @@ class HomeControllerTest {
             add(movie4);
             add(movie5);
         }};
+
+        movie1.setMainCast(List.of("Bruce Willis", "Alan Rickman"));
+        movie1.setDirectors(List.of("John McTiernan"));
+        movie1.setReleaseYear(1988);
+
+        movie2.setMainCast(List.of("Jackie Chan", "Chris Tucker"));
+        movie2.setDirectors(List.of("Brett Ratner"));
+        movie2.setReleaseYear(1998);
+
+        movie3.setMainCast(List.of("Will Smith", "Bill Pullman"));
+        movie3.setDirectors(List.of("Roland Emmerich"));
+        movie3.setReleaseYear(1996);
+
+        movie4.setMainCast(List.of("Chris Pine", "Zachary Quinto"));
+        movie4.setDirectors(List.of("J.J. Abrams"));
+        movie4.setReleaseYear(2009);
+
+        movie5.setMainCast(List.of("Elijah Wood", "Zachary Quinto"));
+        movie5.setDirectors(List.of("Peter Jackson"));
+        movie5.setReleaseYear(2001);
+
+        streamTestMovies = List.of(movie1, movie2, movie3, movie4, movie5);
     }
 
     @BeforeEach
@@ -142,6 +165,50 @@ class HomeControllerTest {
         movieAPIServiceMockedStatic.close();
     }
 
+    // Streams test
+    @Nested
+    class StreamsTest{
+        @Test
+        void testGetMostPopularActor() {
+
+            String mostPopularActor = homeController.getMostPopularActor(streamTestMovies);
+
+            assertEquals("Zachary Quinto", mostPopularActor);
+        }
+
+        @Test
+        void testGetLongestMovieTitle() {
+
+            int longestMovieTitle = homeController.getLongestMovieTitle(streamTestMovies);
+
+            assertEquals(17, longestMovieTitle);
+        }
+
+        @Test
+        void testCountMoviesFrom() {
+
+            long moviesFromJohnMcTiernan = homeController.countMoviesFrom(streamTestMovies, "John McTiernan");
+            long moviesFromNonExistentDirector = homeController.countMoviesFrom(streamTestMovies, "Non-existent Director");
+
+            assertEquals(1, moviesFromJohnMcTiernan);
+            assertEquals(0, moviesFromNonExistentDirector);
+        }
+
+        @Test
+        void testGetMoviesBetweenYears() {
+
+            List<Movie> moviesBetween1988And1998 = homeController.getMoviesBetweenYears(streamTestMovies, 1988, 1998);
+            List<Movie> moviesBetween2000And2010 = homeController.getMoviesBetweenYears(streamTestMovies, 2000, 2010);
+            List<Movie> moviesBetween2020And2030 = homeController.getMoviesBetweenYears(streamTestMovies, 2020, 2030);
+
+            assertEquals(3, moviesBetween1988And1998.size());
+            assertEquals(2, moviesBetween2000And2010.size());
+            assertEquals(0, moviesBetween2020And2030.size());
+        }
+    }
+
+
+    //
     @Nested
     class Initialize {
         @Test
