@@ -81,7 +81,7 @@ public class WatchlistEntity {
         return new ArrayList<>(Arrays.asList(string.split(",")));
     }
 
-    public String getId() {
+    public String getApiId() {
         return apiId;
     }
 

@@ -7,10 +7,12 @@ module at.ac.fhcampuswien.fhmdb {
     requires com.fasterxml.jackson.databind;
     requires annotations;
     requires ormlite.jdbc;
+    requires java.sql;
 
     opens at.ac.fhcampuswien.fhmdb to javafx.fxml;
     exports at.ac.fhcampuswien.fhmdb;
     exports at.ac.fhcampuswien.fhmdb.models;
     exports at.ac.fhcampuswien.fhmdb.service;
     exports at.ac.fhcampuswien.fhmdb.filter;
+    exports at.ac.fhcampuswien.fhmdb.exceptions;
 }
