@@ -9,11 +9,19 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 public class MovieCell extends ListCell<Movie> {
+    private static final String TEXT_WHITE = "text-white";
+    private static final String TEXT_YELLOW = "text-yellow";
     private final Label title = new Label();
     private final Label detail = new Label();
     private final Label genre = new Label();
-    private final VBox layout = new VBox(title, detail, genre);
+    private final Label movieDetails = new Label();
+    private final Label producingCast = new Label();
+    private final Label directors = new Label();
+    private final Label mainCast = new Label();
+    private final VBox layout = new VBox(title, detail, genre, movieDetails, producingCast, mainCast);
 
     @Override
     protected void updateItem(Movie movie, boolean empty) {
@@ -33,10 +41,18 @@ public class MovieCell extends ListCell<Movie> {
 
             genre.setText(movie.getGenres().stream().map(Enum::name).sorted().reduce((a, b) -> a + ", " + b).orElse(""));
             genre.getStyleClass().add("text-genre");
+            movieDetails.setText("Year: " + movie.getReleaseYear() + " • Runtime: " + movie.getLengthInMinutes() + " min • Rating: " + movie.getRating());
+            producingCast.setText("Writers: " + formatListOfNames(movie.getWriters())
+                            + " • Directors: " + formatListOfNames(movie.getDirectors()));
+            mainCast.setText("Main Cast: " + formatListOfNames(movie.getMainCast()));
 
             // color scheme
-            title.getStyleClass().add("text-yellow");
-            detail.getStyleClass().add("text-white");
+            title.getStyleClass().add(TEXT_YELLOW);
+            detail.getStyleClass().add(TEXT_WHITE);
+            movieDetails.getStyleClass().add(TEXT_WHITE);
+            producingCast.getStyleClass().add(TEXT_WHITE);
+            directors.getStyleClass().add(TEXT_WHITE);
+            mainCast.getStyleClass().add(TEXT_WHITE);
             layout.setBackground(new Background(new BackgroundFill(Color.web("#454545"), null, null)));
 
             // layout
@@ -48,6 +64,10 @@ public class MovieCell extends ListCell<Movie> {
             layout.alignmentProperty().set(javafx.geometry.Pos.CENTER_LEFT);
             setGraphic(layout);
         }
+    }
+
+    private String formatListOfNames(List<String> list) {
+        return list.stream().sorted().reduce((a, b) -> a + ", " + b).orElse("");
     }
 }
 
