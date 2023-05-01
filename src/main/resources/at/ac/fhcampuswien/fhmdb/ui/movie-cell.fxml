@@ -5,17 +5,18 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
-<HBox prefWidth="890" styleClass="movie-cell" xmlns:fx="http://javafx.com/fxml" fx:controller="at.ac.fhcampuswien.fhmdb.ui.MovieCellController">
-    <VBox prefWidth="690" spacing="10">
+<HBox prefWidth="850" styleClass="movie-cell" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="at.ac.fhcampuswien.fhmdb.ui.MovieCellController">
+    <VBox prefWidth="680" spacing="10">
         <!-- Information -->
-        <VBox VBox.vgrow="ALWAYS">
+        <VBox spacing="2">
             <!-- Essential Information -->
             <Label fx:id="title" styleClass="text-yellow, text-big"/>
-            <Label fx:id="description" styleClass="text-white"/>
+            <Label fx:id="description" styleClass="text-white" wrapText="true"/>
             <Label fx:id="genre" styleClass="text-genre"/>
         </VBox>
 
-        <VBox fx:id="additionalInformation" visible="false" managed="false">
+        <VBox fx:id="additionalInformation" visible="false" managed="false" spacing="2">
             <!-- Additional Information -->
             <Label fx:id="year" styleClass="text-white"/>
             <Label fx:id="runtime" styleClass="text-white"/>
@@ -26,17 +27,19 @@
         </VBox>
     </VBox>
 
-    <VBox>
+    <Pane HBox.hgrow="ALWAYS" />
+
+    <VBox alignment="TOP_RIGHT">
         <padding>
             <Insets>
                 <top>6</top>
             </Insets>
         </padding>
 
-        <HBox prefWidth="200" spacing="10">
+        <HBox prefWidth="170" spacing="10">
             <!-- Buttons -->
-            <JFXButton fx:id="detailsButton" text="Show Details" />
-            <JFXButton fx:id="watchlistButton" text="Watchlist" />
+            <JFXButton fx:id="detailsButton" text="Show Details"/>
+            <JFXButton fx:id="watchlistButton" text="Watchlist"/>
         </HBox>
     </VBox>
 </HBox>

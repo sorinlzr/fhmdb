@@ -4,6 +4,7 @@ import at.ac.fhcampuswien.fhmdb.filter.Genre;
 import com.jfoenix.controls.JFXButton;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ public class MovieCellController {
     private Label description;
     @FXML
     private Label genre;
+    @FXML
+    private VBox additionalInformation;
     @FXML
     private Label year;
     @FXML
@@ -30,6 +33,22 @@ public class MovieCellController {
     private JFXButton detailsButton;
     @FXML
     private JFXButton watchlistButton;
+
+    public void initialize(){
+        detailsButton.setOnAction(e -> toggleDetails());
+    }
+
+    private void toggleDetails() {
+        if (additionalInformation.isVisible()) {
+            additionalInformation.setVisible(false);
+            additionalInformation.setManaged(false);
+            detailsButton.setText("Show Details");
+        } else {
+            additionalInformation.setVisible(true);
+            additionalInformation.setManaged(true);
+            detailsButton.setText("Hide Details");
+        }
+    }
 
     public void setTitle(String title) {
         this.title.setText(title);
@@ -48,7 +67,7 @@ public class MovieCellController {
     }
 
     public void setRuntime(int runtime) {
-        this.runtime.setText("Runtime: " + runtime + " min");
+        this.runtime.setText("Runtime: " + runtime + "min");
     }
 
     public void setRating(double rating) {
