@@ -15,4 +15,6 @@ module at.ac.fhcampuswien.fhmdb {
     exports at.ac.fhcampuswien.fhmdb.service;
     exports at.ac.fhcampuswien.fhmdb.filter;
     exports at.ac.fhcampuswien.fhmdb.exceptions;
+    exports at.ac.fhcampuswien.fhmdb.dao;
+    opens at.ac.fhcampuswien.fhmdb.dao to javafx.fxml;
 }
