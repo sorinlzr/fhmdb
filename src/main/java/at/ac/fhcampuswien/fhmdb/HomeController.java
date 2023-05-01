@@ -12,10 +12,14 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static javafx.scene.paint.Color.*;
 
 public class HomeController {
     @FXML
@@ -53,14 +57,27 @@ public class HomeController {
     private VBox navigation;
 
     @FXML
-    private JFXHamburger hamburgerButton;
+    private JFXButton navigationButton;
 
     @FXML
     private JFXButton aboutButton;
 
+    private SVGPath cross = new SVGPath();
+    private SVGPath burger = new SVGPath();
+
     public void initialize() {
         movies.addAll(getAllMoviesOrEmptyList());
         sortMovies();
+
+        burger.setContent("M 10 10 L 30 10 M 10 20 L 30 20 M 10 30 L 30 30");
+        burger.setStroke(Color.WHITE);
+        burger.setStrokeWidth(4);
+
+        cross.setContent("M 10 10 L 30 30 M 30 10 L 10 30");
+        cross.setStroke(Color.WHITE);
+        cross.setStrokeWidth(4);
+
+        navigationButton.setGraphic(burger);
 
         movieListView.setItems(movies);
         movieListView.setCellFactory(e -> new MovieCell());
@@ -86,8 +103,8 @@ public class HomeController {
             sortMovies();
         });
 
-        hamburgerButton.setOnMouseClicked(e -> toggleNavigation());
-        aboutButton.setOnMouseClicked(e -> showAboutInformation());
+        navigationButton.setOnAction(e -> toggleNavigation());
+        aboutButton.setOnAction(e -> showAboutInformation());
 
         resetFilterBtn.setOnAction(actionEvent -> resetFilter());
     }
@@ -108,9 +125,11 @@ public class HomeController {
         if (navigation.isVisible()) {
             navigation.setVisible(false);
             navigation.setManaged(false);
+            navigationButton.setGraphic(burger);
         } else {
             navigation.setVisible(true);
             navigation.setManaged(true);
+            navigationButton.setGraphic(cross);
         }
     }
 

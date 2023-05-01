@@ -13,6 +13,7 @@
 <?import com.jfoenix.controls.JFXHamburger?>
 <?import com.jfoenix.controls.JFXDrawer?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.Button?>
 <HBox prefWidth="850" maxWidth="Infinity" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="at.ac.fhcampuswien.fhmdb.HomeController">
 
@@ -42,7 +43,7 @@
 
             <Pane HBox.hgrow="ALWAYS" />
 
-            <JFXHamburger fx:id="hamburgerButton" styleClass="text-white" style="-fx-background-color: white"/>
+            <JFXButton fx:id="navigationButton" style="-fx-background-color: transparent" />
         </HBox>
 
         <HBox spacing="5" styleClass="background-black">
