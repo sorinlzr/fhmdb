@@ -61,7 +61,7 @@ public class Database {
         try {
             TableUtils.createTableIfNotExists(connectionSource, WatchlistEntity.class);
             dao = DaoManager.createDao(connectionSource, WatchlistEntity.class);
-        } catch (SQLException | NullPointerException | IllegalArgumentException e) {
+        } catch (SQLException | IllegalArgumentException e) {
             throw new DatabaseException(CONNECTION_ERROR_MESSAGE, e);
             // Show exception dialog
         }
@@ -72,6 +72,7 @@ public class Database {
             return dao;
         }
         else throw new NullPointerException(CONNECTION_DAO_ERROR);
+        // Show exception dialog
     }
 
     // Left it open bc I weren't sure how to implement the closing method of the database iterator:
