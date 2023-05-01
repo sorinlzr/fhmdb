@@ -25,6 +25,10 @@
     -fx-background-color: #000000;
 }
 
+.background-white{
+    -fx-background-color: #ffffff;
+}
+
 .background-light-black {
     -fx-background-color: #454545;
 }
@@ -32,6 +36,18 @@
 /* Elements */
 JFXButton{
     -fx-background-color: #f5c518;
+}
+
+/* IDs */
+#navigation {
+    -fx-view-order: -1;
+    -fx-min-width: 200px;
+}
+
+#navigation JFXButton {
+    -fx-padding: 10px 0px;
+    -fx-min-width: 200px;
+    -fx-background-radius: 0;
 }
 
 /* Classes */

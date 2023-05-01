@@ -7,7 +7,7 @@
 <?import javafx.geometry.Insets?>
 <HBox prefWidth="850" styleClass="movie-cell" xmlns:fx="http://javafx.com/fxml"
       fx:controller="at.ac.fhcampuswien.fhmdb.ui.MovieCellController">
-    <VBox prefWidth="670" spacing="10">
+    <VBox prefWidth="680" spacing="10">
         <!-- Information -->
         <VBox spacing="2">
             <!-- Essential Information -->
@@ -37,7 +37,7 @@
             </Insets>
         </padding>
 
-        <HBox prefWidth="170" spacing="10">
+        <HBox prefWidth="160" spacing="5">
             <!-- Buttons -->
             <JFXButton fx:id="detailsButton" text="Show Details"/>
             <JFXButton fx:id="addToWatchlistButton" text="Watchlist"/>

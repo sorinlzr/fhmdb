@@ -10,27 +10,42 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="331.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1"
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import javafx.scene.layout.Pane?>
+<HBox prefWidth="850" maxWidth="Infinity" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="at.ac.fhcampuswien.fhmdb.HomeController">
-    <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="347.0" spacing="20.0"
-          style="-fx-background-color: black;">
-        <padding>
-            <Insets bottom="7.0" left="10.0" top="7.0"/>
-        </padding>
-        <children>
+
+    <VBox fx:id="navigation" styleClass="background-white" alignment="TOP_CENTER" visible="false" managed="false">
+        <JFXButton fx:id="homeButton" styleClass="background-light-black, text-white">Home</JFXButton>
+        <JFXButton fx:id="watchlistButton" styleClass="background-white">Watchlist</JFXButton>
+        <JFXButton fx:id="aboutButton" styleClass="background-white">About</JFXButton>
+    </VBox>
+
+    <VBox maxWidth="Infinity" HBox.hgrow="ALWAYS">
+        <HBox alignment="CENTER_LEFT" spacing="5.0" styleClass="background-black">
+            <padding>
+                <Insets top="7" right="10" bottom="7" left="10"/>
+            </padding>
+
             <Label styleClass="text-yellow" text="FHMDb">
                 <font>
                     <Font name="Calibri Bold" size="24.0"/>
                 </font>
+
                 <padding>
                     <Insets left="2.0" right="2.0"/>
                 </padding>
             </Label>
+
             <Label styleClass="text-white" text="Welcome to FHMDb!"/>
-        </children>
-    </HBox>
-    <HBox spacing="5.0" styleClass="background-black">
-        <children>
+
+            <Pane HBox.hgrow="ALWAYS" />
+
+            <JFXHamburger fx:id="hamburgerButton" styleClass="text-white" style="-fx-background-color: white"/>
+        </HBox>
+
+        <HBox spacing="5" styleClass="background-black">
             <JFXButton fx:id="sortBtn" text="Sort (desc)"/>
             <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0" promptText="Search FHMDb"/>
             <JFXComboBox fx:id="genreComboBox" focusColor="#f5c518" styleClass="filter-combo-box"/>
@@ -38,14 +53,12 @@
             <JFXComboBox fx:id="ratingComboBox" focusColor="#f5c518" styleClass="filter-combo-box"/>
             <JFXButton fx:id="searchBtn" text="Search"/>
             <JFXButton fx:id="resetFilterBtn" styleClass="text-red" text="Reset Filter"/>
-        </children>
-        <VBox.margin>
-            <Insets/>
-        </VBox.margin>
-        <padding>
-            <Insets bottom="20.0" left="10.0" top="20.0"/>
-        </padding>
-    </HBox>
 
-    <JFXListView fx:id="movieListView" styleClass="background-black" VBox.vgrow="ALWAYS"/>
-</VBox>
+            <padding>
+                <Insets bottom="20.0" left="10.0" top="20.0"/>
+            </padding>
+        </HBox>
+
+        <JFXListView fx:id="movieListView" styleClass="background-black" VBox.vgrow="ALWAYS"/>
+    </VBox>
+</HBox>

@@ -6,13 +6,12 @@ import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
 import at.ac.fhcampuswien.fhmdb.filter.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.*;
@@ -50,6 +49,15 @@ public class HomeController {
 
     private final ObservableList<Movie> movies = FXCollections.observableArrayList();
 
+    @FXML
+    private VBox navigation;
+
+    @FXML
+    private JFXHamburger hamburgerButton;
+
+    @FXML
+    private JFXButton aboutButton;
+
     public void initialize() {
         movies.addAll(getAllMoviesOrEmptyList());
         sortMovies();
@@ -78,7 +86,32 @@ public class HomeController {
             sortMovies();
         });
 
+        hamburgerButton.setOnMouseClicked(e -> toggleNavigation());
+        aboutButton.setOnMouseClicked(e -> showAboutInformation());
+
         resetFilterBtn.setOnAction(actionEvent -> resetFilter());
+    }
+
+    private void showAboutInformation() {
+        ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("About");
+        dialog.setHeaderText("About FHMDb");
+        dialog.setContentText("FHMDb features a movie list with rich information. To support this free application please consider giving us full points for this assignment. \n \n Developers: \n Sorin Lazar \n Burak Kongo \n Benjamin Lichtenstein \n\n\n");
+        dialog.getDialogPane().getButtonTypes().add(okButton);
+
+        dialog.showAndWait();
+    }
+
+    private void toggleNavigation() {
+        if (navigation.isVisible()) {
+            navigation.setVisible(false);
+            navigation.setManaged(false);
+        } else {
+            navigation.setVisible(true);
+            navigation.setManaged(true);
+        }
     }
 
     private void resetFilter() {
@@ -106,7 +139,7 @@ public class HomeController {
 
         try {
             moviesWithFilter = MovieAPIService.getMoviesBy(searchField.getText(), genre, releaseYear, ratingFrom);
-        } catch (IOException e){
+        } catch (IOException e) {
             moviesWithFilter = new ArrayList<>();
         }
 
@@ -114,7 +147,7 @@ public class HomeController {
         sortMovies();
     }
 
-    private void sortMovies(){
+    private void sortMovies() {
         if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
             movies.sort(Collections.reverseOrder());
         } else {
@@ -127,7 +160,7 @@ public class HomeController {
 
         try {
             allMovies = MovieAPIService.getMovies();
-        } catch (IOException e){
+        } catch (IOException e) {
             allMovies = new ArrayList<>();
         }
 
