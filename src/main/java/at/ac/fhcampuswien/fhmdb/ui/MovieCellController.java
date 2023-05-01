@@ -32,7 +32,9 @@ public class MovieCellController {
     @FXML
     private JFXButton detailsButton;
     @FXML
-    private JFXButton watchlistButton;
+    private JFXButton addToWatchlistButton;
+    @FXML
+    private JFXButton removeFromWatchlistButton;
 
     public void initialize(){
         detailsButton.setOnAction(e -> toggleDetails());
@@ -84,6 +86,13 @@ public class MovieCellController {
 
     public void setMainCast(List<String> mainCast) {
         this.mainCast.setText("Main Cast: " + formatListOfNames(mainCast));
+    }
+
+    public void addToWatchlist() {
+        removeFromWatchlistButton.setVisible(true);
+        removeFromWatchlistButton.setManaged(true);
+        addToWatchlistButton.setVisible(false);
+        addToWatchlistButton.setManaged(false);
     }
 
     private String formatListOfNames(List<String> list) {
