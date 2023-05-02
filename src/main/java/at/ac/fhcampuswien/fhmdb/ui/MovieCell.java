@@ -8,10 +8,12 @@ import javafx.scene.control.ListCell;
 import java.io.IOException;
 
 public class MovieCell extends ListCell<Movie> {
-    private final Node graphic;
-    private final MovieCellController controller;
 
-    public MovieCell() {
+    @Override
+    protected void updateItem(Movie movie, boolean empty) {
+        Node graphic;
+        MovieCellController controller;
+
         try {
             FXMLLoader loader = new FXMLLoader(MovieCell.class.getResource("movie-cell.fxml"));
             graphic = loader.load();
@@ -19,10 +21,7 @@ public class MovieCell extends ListCell<Movie> {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
 
-    @Override
-    protected void updateItem(Movie movie, boolean empty) {
         super.updateItem(movie, empty);
 
         if (empty || movie == null) {
