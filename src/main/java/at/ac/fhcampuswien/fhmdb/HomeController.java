@@ -6,6 +6,7 @@ import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
 import at.ac.fhcampuswien.fhmdb.filter.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
+import at.ac.fhcampuswien.fhmdb.ui.SVG;
 import com.jfoenix.controls.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -69,11 +70,11 @@ public class HomeController {
         movies.addAll(getAllMoviesOrEmptyList());
         sortMovies();
 
-        burger.setContent("M 10 10 L 30 10 M 10 20 L 30 20 M 10 30 L 30 30");
+        burger.setContent(SVG.BURGER);
         burger.setStroke(Color.WHITE);
         burger.setStrokeWidth(4);
 
-        cross.setContent("M 10 10 L 30 30 M 30 10 L 10 30");
+        cross.setContent(SVG.CROSS);
         cross.setStroke(Color.WHITE);
         cross.setStrokeWidth(4);
 
