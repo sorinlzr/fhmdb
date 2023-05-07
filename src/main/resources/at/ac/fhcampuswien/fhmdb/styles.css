@@ -1,14 +1,6 @@
-
-.background-yellow {
-    -fx-background-color: #f5c518;
-}
-
-.background-black {
-    -fx-background-color: #000000;
-}
-
-.background-light-black {
-    -fx-background-color: #454545;
+/* Text */
+.text-big{
+    -fx-font-size: 20px;
 }
 
 .text-yellow {
@@ -28,6 +20,43 @@
     -fx-text-fill: #ffffff;
 }
 
+/* Colors */
+.background-black {
+    -fx-background-color: #000000;
+}
+
+.background-white{
+    -fx-background-color: #ffffff;
+}
+
+.background-light-black {
+    -fx-background-color: #454545;
+}
+
+/* Elements */
+JFXButton{
+    -fx-background-color: #f5c518;
+}
+
+/* IDs */
+#navigation {
+    -fx-view-order: -1;
+    -fx-min-width: 200px;
+}
+
+#navigation JFXButton {
+    -fx-padding: 10px 0px;
+    -fx-min-width: 200px;
+    -fx-background-radius: 0;
+}
+
+/* Classes */
+.movie-cell {
+    -fx-background-color: #454545;
+    -fx-padding: 4px 6px;
+    -fx-background-radius: 5px;
+}
+
 .list-view .list-cell:even {
     -fx-background-color: black;
     -fx-text-fill: white;
@@ -36,11 +65,6 @@
 .list-view .list-cell:odd {
     -fx-background-color: black;
     -fx-text-fill: white;
-}
-
-.movie-cell {
-    -fx-background-color: black;
-    -fx-padding: 2;
 }
 
 .filter-combo-box {
