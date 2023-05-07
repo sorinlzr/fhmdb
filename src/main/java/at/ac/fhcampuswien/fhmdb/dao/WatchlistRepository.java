@@ -1,4 +1,5 @@
 package at.ac.fhcampuswien.fhmdb.dao;
+import at.ac.fhcampuswien.fhmdb.database.Database;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistEntity;
 import com.j256.ormlite.dao.Dao;
@@ -12,8 +13,8 @@ public class WatchlistRepository {
     private static final String CONNECTION_ERROR_MESSAGE = "Failed to create a connection to the database";
     private static final String MOVIE_ALREADY_IN_THE_WATCHLIST = "Selected movie is already in the watchlist";
 
-    public WatchlistRepository(Dao<WatchlistEntity, Long> dao) {
-        this.dao = dao;
+    public WatchlistRepository() throws DatabaseException {
+        this.dao = Database.getInstance().getWatchlistDao();
     }
 
     public void removeFromWatchlist(WatchlistEntity movie) throws DatabaseException {
@@ -51,7 +52,7 @@ public class WatchlistRepository {
                 }
                 else throw new DatabaseException(MOVIE_ALREADY_IN_THE_WATCHLIST);
             }
-        } catch (SQLException | IllegalArgumentException e) {
+        } catch (SQLException e) {
             throw new DatabaseException(CONNECTION_ERROR_MESSAGE, e);
         }
     }
