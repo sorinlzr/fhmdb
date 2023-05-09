@@ -1,28 +1,40 @@
-package at.ac.fhcampuswien.fhmdb;
+package at.ac.fhcampuswien.fhmdb.controller;
 
+import at.ac.fhcampuswien.fhmdb.FhmdbApplication;
+import at.ac.fhcampuswien.fhmdb.filter.Genre;
 import at.ac.fhcampuswien.fhmdb.filter.Rating;
 import at.ac.fhcampuswien.fhmdb.filter.Year;
-import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
-import at.ac.fhcampuswien.fhmdb.filter.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
-import at.ac.fhcampuswien.fhmdb.ui.SVG;
-import com.jfoenix.controls.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static javafx.scene.paint.Color.*;
+public class HomeController extends DefaultController {
 
-public class HomeController {
+    @FXML
+    private StackPane parent;
+    @FXML
+    protected JFXButton watchlistButton;
+    @FXML
+    public JFXButton navigationButton;
+
+    public HomeController() {
+        this.onWatchlistButtonClicked = (clickedItem) -> {
+            System.out.println("Movie added to watchlist");
+            //TODO add logic to add from DB
+        };
+    }
+
     @FXML
     private TextField searchField;
 
@@ -49,39 +61,10 @@ public class HomeController {
 
     private static final String NO_FILTER = "";
 
-    @FXML
-    private JFXListView<Movie> movieListView;
-
-    private final ObservableList<Movie> movies = FXCollections.observableArrayList();
-
-    @FXML
-    private VBox navigation;
-
-    @FXML
-    private JFXButton navigationButton;
-
-    @FXML
-    private JFXButton aboutButton;
-
-    private SVGPath cross = new SVGPath();
-    private SVGPath burger = new SVGPath();
-
     public void initialize() {
-        movies.addAll(getAllMoviesOrEmptyList());
+        super.initialize();
         sortMovies();
-
-        burger.setContent(SVG.BURGER);
-        burger.setStroke(Color.WHITE);
-        burger.setStrokeWidth(4);
-
-        cross.setContent(SVG.CROSS);
-        cross.setStroke(Color.WHITE);
-        cross.setStrokeWidth(4);
-
-        navigationButton.setGraphic(burger);
-
-        movieListView.setItems(movies);
-        movieListView.setCellFactory(e -> new MovieCell());
+        movies.addAll(getAllMoviesOrEmptyList());
 
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setValue(Genre.NO_FILTER);
@@ -104,34 +87,12 @@ public class HomeController {
             sortMovies();
         });
 
-        navigationButton.setOnAction(e -> toggleNavigation());
-        aboutButton.setOnAction(e -> showAboutInformation());
+        watchlistButton.setOnMouseClicked(e -> {
+            System.out.println("watchlist button clicked");
+            showWatchlistView();
+        });
 
         resetFilterBtn.setOnAction(actionEvent -> resetFilter());
-    }
-
-    private void showAboutInformation() {
-        ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("About");
-        dialog.setHeaderText("About FHMDb");
-        dialog.setContentText("FHMDb features a movie list with rich information. To support this free application please consider giving us full points for this assignment. \n \n Developers: \n Sorin Lazar \n Burak Kongo \n Benjamin Lichtenstein \n\n\n");
-        dialog.getDialogPane().getButtonTypes().add(okButton);
-
-        dialog.showAndWait();
-    }
-
-    private void toggleNavigation() {
-        if (navigation.isVisible()) {
-            navigation.setVisible(false);
-            navigation.setManaged(false);
-            navigationButton.setGraphic(burger);
-        } else {
-            navigation.setVisible(true);
-            navigation.setManaged(true);
-            navigationButton.setGraphic(cross);
-        }
     }
 
     private void resetFilter() {
@@ -175,7 +136,7 @@ public class HomeController {
         }
     }
 
-    private List<Movie> getAllMoviesOrEmptyList() {
+    protected List<Movie> getAllMoviesOrEmptyList() {
         List<Movie> allMovies;
 
         try {
@@ -238,5 +199,18 @@ public class HomeController {
 
                 // Collect the filtered movies into a list and return the result
                 .collect(Collectors.toList());
+    }
+
+    public void showWatchlistView () {
+        FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));
+        Scene scene;
+        try {
+            scene = new Scene(fxmlLoader.load());
+            Stage stage = (Stage) parent.getScene().getWindow();
+            stage.setScene(scene);
+        } catch (IOException e) {
+            System.out.println("Could not render scene");
+        }
+
     }
 }

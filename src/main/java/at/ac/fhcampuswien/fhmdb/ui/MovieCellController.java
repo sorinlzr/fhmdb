@@ -37,7 +37,7 @@ public class MovieCellController {
     private JFXButton removeFromWatchlistButton;
 
     public void initialize(){
-        detailsButton.setOnAction(e -> toggleDetails());
+        detailsButton.setOnMouseClicked(e -> toggleDetails());
     }
 
     private void toggleDetails() {
@@ -97,5 +97,13 @@ public class MovieCellController {
 
     private String formatListOfNames(List<String> list) {
         return list.stream().sorted().reduce((a, b) -> a + ", " + b).orElse("");
+    }
+
+    public JFXButton getAddToWatchlistButton() {
+        return addToWatchlistButton;
+    }
+
+    public JFXButton getRemoveFromWatchlistButton() {
+        return removeFromWatchlistButton;
     }
 }
