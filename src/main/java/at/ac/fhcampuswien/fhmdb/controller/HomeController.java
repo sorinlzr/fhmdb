@@ -1,19 +1,19 @@
 package at.ac.fhcampuswien.fhmdb.controller;
 
 import at.ac.fhcampuswien.fhmdb.FhmdbApplication;
+import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.filter.Genre;
 import at.ac.fhcampuswien.fhmdb.filter.Rating;
 import at.ac.fhcampuswien.fhmdb.filter.Year;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.models.WatchlistEntity;
 import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
@@ -28,13 +28,6 @@ public class HomeController extends DefaultController {
     @FXML
     public JFXButton navigationButton;
 
-    public HomeController() {
-        this.onWatchlistButtonClicked = (clickedItem) -> {
-            System.out.println("Movie added to watchlist");
-            //TODO add logic to add from DB
-        };
-    }
-
     @FXML
     private TextField searchField;
 
@@ -48,8 +41,8 @@ public class HomeController extends DefaultController {
     private JFXButton sortBtn;
 
     private static final String SORT_DEFAULT_TEXT_ASC = "Sort (asc)";
-    private static final String SORT_DEFAULT_TEXT_DESC = "Sort (desc)";
 
+    private static final String SORT_DEFAULT_TEXT_DESC = "Sort (desc)";
     @FXML
     private JFXComboBox<Genre> genreComboBox;
 
@@ -77,6 +70,15 @@ public class HomeController extends DefaultController {
 
         searchBtn.setOnAction(actionEvent -> setFilter());
 
+        onWatchlistButtonClicked = (clickedItem) -> {
+            try {
+                if (repository == null) throw new DatabaseException(NO_DB_CONNECTION_AVAILABLE);
+                repository.addToWatchlist(new WatchlistEntity(clickedItem));
+            } catch (DatabaseException e) {
+                showInfoMessage(e.getMessage());
+            }
+        };
+
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
                 sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
@@ -89,7 +91,7 @@ public class HomeController extends DefaultController {
 
         watchlistButton.setOnMouseClicked(e -> {
             System.out.println("watchlist button clicked");
-            showWatchlistView();
+            showView();
         });
 
         resetFilterBtn.setOnAction(actionEvent -> resetFilter());
@@ -201,16 +203,9 @@ public class HomeController extends DefaultController {
                 .collect(Collectors.toList());
     }
 
-    public void showWatchlistView () {
+    public void showView() {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));
-        Scene scene;
-        try {
-            scene = new Scene(fxmlLoader.load());
-            Stage stage = (Stage) parent.getScene().getWindow();
-            stage.setScene(scene);
-        } catch (IOException e) {
-            System.out.println("Could not render scene");
-        }
+        renderScene(fxmlLoader, parent);
 
     }
 }

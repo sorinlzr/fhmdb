@@ -8,7 +8,8 @@
 <StackPane fx:id="parent" prefWidth="950" maxWidth="Infinity" xmlns="http://javafx.com/javafx/15.0.1"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="at.ac.fhcampuswien.fhmdb.controller.WatchlistController"
-           stylesheets="@styles.css" alignment="CENTER_LEFT">
+           stylesheets="@styles.css" alignment="CENTER_LEFT"
+           minHeight="700">
 
     <VBox fx:id="navigationMenu" styleClass="background-white"
           visible="false" managed="false"

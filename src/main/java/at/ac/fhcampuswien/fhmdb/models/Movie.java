@@ -34,6 +34,20 @@ public class Movie implements Comparable<Movie> {
         this.description = description;
     }
 
+    public Movie(WatchlistEntity movie) {
+        this.id = movie.getApiId();
+        this.imgUrl = movie.getImgUrl();
+        this.title = movie.getTitle();
+        this.description = movie.getDescription();
+        this.genres = movie.getGenres();
+        this.releaseYear = movie.getReleaseYear();
+        this.directors = movie.getDirectors();
+        this.writers = movie.getWriters();
+        this.mainCast = movie.getMainCast();
+        this.lengthInMinutes = movie.getLengthInMinutes();
+        this.rating = movie.getRating();
+    }
+
     public String getTitle() {
         return title;
     }
