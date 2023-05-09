@@ -95,6 +95,14 @@ public class MovieCellController {
         addToWatchlistButton.setManaged(false);
     }
 
+    public JFXButton getAddToWatchlistButton() {
+        return addToWatchlistButton;
+    }
+
+    public JFXButton getRemoveFromWatchlistButton() {
+        return removeFromWatchlistButton;
+    }
+
     private String formatListOfNames(List<String> list) {
         return list.stream().sorted().reduce((a, b) -> a + ", " + b).orElse("");
     }

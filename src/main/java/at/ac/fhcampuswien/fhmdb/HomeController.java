@@ -10,6 +10,8 @@ import at.ac.fhcampuswien.fhmdb.ui.SVG;
 import com.jfoenix.controls.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static javafx.scene.paint.Color.*;
 
-public class HomeController {
+public class HomeController{
     @FXML
     private TextField searchField;
 
@@ -66,6 +68,13 @@ public class HomeController {
     private SVGPath cross = new SVGPath();
     private SVGPath burger = new SVGPath();
 
+    private final ClickEventHandler onAddToWatchlistClicked = (clickedItem) ->
+    {
+        System.out.println("Add to watchlist clicked!");
+        System.out.println(clickedItem.toString());
+        //TODO implement save item to database here!
+    };
+
     public void initialize() {
         movies.addAll(getAllMoviesOrEmptyList());
         sortMovies();
@@ -81,7 +90,7 @@ public class HomeController {
         navigationButton.setGraphic(burger);
 
         movieListView.setItems(movies);
-        movieListView.setCellFactory(e -> new MovieCell());
+        movieListView.setCellFactory(e -> new MovieCell(onAddToWatchlistClicked));
 
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setValue(Genre.NO_FILTER);

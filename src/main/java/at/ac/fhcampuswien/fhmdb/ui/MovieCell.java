@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.ui;
 
+import at.ac.fhcampuswien.fhmdb.ClickEventHandler;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -8,11 +9,11 @@ import javafx.scene.control.ListCell;
 import java.io.IOException;
 
 public class MovieCell extends ListCell<Movie> {
+    private final Node graphic;
+    private final MovieCellController controller;
 
-    @Override
-    protected void updateItem(Movie movie, boolean empty) {
-        Node graphic;
-        MovieCellController controller;
+    public MovieCell(ClickEventHandler addToWatchlistClicked) {
+        super();
 
         try {
             FXMLLoader loader = new FXMLLoader(MovieCell.class.getResource("movie-cell.fxml"));
@@ -22,6 +23,13 @@ public class MovieCell extends ListCell<Movie> {
             throw new RuntimeException(e);
         }
 
+        controller.getAddToWatchlistButton().setOnMouseClicked(mouseEvent ->{
+            addToWatchlistClicked.onClick(getItem());
+        });
+    }
+
+    @Override
+    protected void updateItem(Movie movie, boolean empty) {
         super.updateItem(movie, empty);
 
         if (empty || movie == null) {
