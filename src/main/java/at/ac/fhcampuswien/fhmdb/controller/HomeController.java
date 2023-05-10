@@ -89,7 +89,6 @@ public class HomeController extends AbstractViewController {
         });
 
         watchlistButton.setOnMouseClicked(e -> {
-            System.out.println("watchlist button clicked");
             switchView();
         });
 
