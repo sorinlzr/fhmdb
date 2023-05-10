@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class DefaultController {
+public abstract class AbstractViewController {
 
     @FXML
     protected JFXListView<Movie> movieListView = new JFXListView<>();

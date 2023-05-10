@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class WatchlistController extends DefaultController {
+public class WatchlistController extends AbstractViewController {
 
     @FXML
     private StackPane parent;

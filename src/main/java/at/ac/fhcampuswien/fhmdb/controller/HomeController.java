@@ -19,7 +19,7 @@ import javafx.scene.layout.StackPane;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HomeController extends DefaultController {
+public class HomeController extends AbstractViewController {
 
     @FXML
     private StackPane parent;
