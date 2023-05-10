@@ -36,7 +36,7 @@ public class WatchlistController extends DefaultController {
 
         homeButton.setOnMouseClicked(e -> {
             System.out.println("Home view button clicked");
-            showView();
+            switchView();
         });
     }
 
@@ -59,7 +59,7 @@ public class WatchlistController extends DefaultController {
         renderScene(fxmlLoader, parent);
     }
 
-    public void showView() {
+    public void switchView() {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/home-view.fxml"));
         renderScene(fxmlLoader, parent);
     }

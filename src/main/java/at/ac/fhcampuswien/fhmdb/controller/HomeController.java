@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.fhmdb.controller;
 
 import at.ac.fhcampuswien.fhmdb.FhmdbApplication;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
+import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;
 import at.ac.fhcampuswien.fhmdb.filter.Genre;
 import at.ac.fhcampuswien.fhmdb.filter.Rating;
 import at.ac.fhcampuswien.fhmdb.filter.Year;
@@ -15,7 +16,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,7 +57,6 @@ public class HomeController extends DefaultController {
     public void initialize() {
         super.initialize();
         sortMovies();
-        movies.addAll(getAllMoviesOrEmptyList());
 
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setValue(Genre.NO_FILTER);
@@ -91,7 +90,7 @@ public class HomeController extends DefaultController {
 
         watchlistButton.setOnMouseClicked(e -> {
             System.out.println("watchlist button clicked");
-            showView();
+            switchView();
         });
 
         resetFilterBtn.setOnAction(actionEvent -> resetFilter());
@@ -122,7 +121,8 @@ public class HomeController extends DefaultController {
 
         try {
             moviesWithFilter = MovieAPIService.getMoviesBy(searchField.getText(), genre, releaseYear, ratingFrom);
-        } catch (IOException e) {
+        } catch (MovieApiException e) {
+            showAlertMessage(e.getMessage());
             moviesWithFilter = new ArrayList<>();
         }
 
@@ -143,7 +143,8 @@ public class HomeController extends DefaultController {
 
         try {
             allMovies = MovieAPIService.getMovies();
-        } catch (IOException e) {
+        } catch (MovieApiException e) {
+            showAlertMessage(e.getMessage());
             allMovies = new ArrayList<>();
         }
 
@@ -203,7 +204,7 @@ public class HomeController extends DefaultController {
                 .collect(Collectors.toList());
     }
 
-    public void showView() {
+    public void switchView() {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));
         renderScene(fxmlLoader, parent);
 

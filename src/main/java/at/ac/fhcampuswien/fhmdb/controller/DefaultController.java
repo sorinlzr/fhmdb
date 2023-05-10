@@ -140,6 +140,6 @@ public abstract class DefaultController {
     }
 
     abstract protected List<Movie> getAllMoviesOrEmptyList();
-    abstract protected void showView();
+    abstract protected void switchView();
 
 }
