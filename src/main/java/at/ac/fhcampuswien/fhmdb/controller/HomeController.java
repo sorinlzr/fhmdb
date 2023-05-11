@@ -105,7 +105,7 @@ public class HomeController extends AbstractViewController {
         releaseYearPicker.setValue(Year.NO_FILTER);
         ratingComboBox.setValue(Rating.NO_FILTER);
 
-        movies.addAll(getAllMoviesOrEmptyList());
+        loadMovies(0, INITIAL_LOAD_COUNT);
         sortMovies();
     }
 
@@ -138,16 +138,12 @@ public class HomeController extends AbstractViewController {
     }
 
     protected List<Movie> getAllMoviesOrEmptyList() {
-        List<Movie> allMovies;
-
         try {
-            allMovies = MovieAPIService.getMovies();
+            return MovieAPIService.getMovies();
         } catch (MovieApiException e) {
             showAlertMessage(e.getMessage());
-            allMovies = new ArrayList<>();
+            return new ArrayList<>();
         }
-
-        return allMovies;
     }
 
 

@@ -48,6 +48,9 @@ public abstract class AbstractViewController {
 
     protected boolean isWatchlistCell = false;
 
+    protected static final int INITIAL_LOAD_COUNT = 15;
+    protected static final int SCROLL_LOAD_COUNT = 10;
+
     protected void initialize() {
 
         if (repository == null) {
@@ -58,7 +61,7 @@ public abstract class AbstractViewController {
             }
         }
 
-        movies.addAll(getAllMoviesOrEmptyList());
+        loadMovies(0, INITIAL_LOAD_COUNT);
         movies.sort(Comparator.naturalOrder());
 
         burger.setContent(SVG.BURGER);
@@ -73,10 +76,22 @@ public abstract class AbstractViewController {
 
         movieListView.setItems(movies);
         movieListView.setCellFactory(e -> new MovieCell(onWatchlistButtonClicked, isWatchlistCell));
+        movieListView.setOnScroll(event -> {
+            int lastIndex = movieListView.getItems().size() - 1;
+            if (lastIndex >= 0 ) {
+                loadMovies(lastIndex + 1, SCROLL_LOAD_COUNT);
+            }
+        });
 
         navigationButton.setOnMouseClicked(e -> toggleNavigation());
         aboutButton.setOnMouseClicked(e -> showAboutInformation());
 
+    }
+
+    protected void loadMovies(int startIndex, int count) {
+        List<Movie> moviesToAdd = getAllMoviesOrEmptyList();
+        int endIndex = Math.min(startIndex + count, moviesToAdd.size());
+        movies.addAll(moviesToAdd.subList(startIndex, endIndex));
     }
 
     private void showAboutInformation() {
