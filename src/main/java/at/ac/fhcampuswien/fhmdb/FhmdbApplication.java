@@ -6,9 +6,11 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class FhmdbApplication extends Application {
 
@@ -18,6 +20,7 @@ public class FhmdbApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 920, 620);
         stage.setTitle("FHMDb");
         stage.setScene(scene);
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/at/ac/fhcampuswien/fhmdb/ui/icons/fhmdb.png"))));
         stage.show();
     }
 
