@@ -20,9 +20,9 @@ public class WatchlistController extends AbstractViewController {
     @FXML
     protected JFXButton homeButton;
 
-
     @Override
     public void initialize() {
+        this.isWatchlistCell = true;
         super.initialize();
 
         this.onWatchlistButtonClicked = (clickedItem) -> {

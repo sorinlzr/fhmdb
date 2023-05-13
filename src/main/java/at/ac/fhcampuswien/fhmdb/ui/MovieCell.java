@@ -11,10 +11,12 @@ import java.io.IOException;
 public class MovieCell extends ListCell<Movie> {
 
     private final ClickEventHandler<Movie> clickEventHandler;
+    private final boolean isWatchlistCell;
 
-    public MovieCell(ClickEventHandler<Movie> clickEventHandler) {
+    public MovieCell(ClickEventHandler<Movie> clickEventHandler, boolean isWatchlistCell) {
         super();
         this.clickEventHandler = clickEventHandler;
+        this.isWatchlistCell = isWatchlistCell;
     }
 
     @Override
@@ -44,6 +46,7 @@ public class MovieCell extends ListCell<Movie> {
                 controller.setWriters(movie.getWriters());
                 controller.setDirectors(movie.getDirectors());
                 controller.setMainCast(movie.getMainCast());
+                if (isWatchlistCell) controller.addToWatchlist();
                 setGraphic(graphic);
             } catch (IOException e) {
                 System.out.println("Error rendering movie cell");

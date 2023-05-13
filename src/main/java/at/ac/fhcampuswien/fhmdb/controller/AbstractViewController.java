@@ -28,31 +28,27 @@ import java.util.Comparator;
 import java.util.List;
 
 public abstract class AbstractViewController {
+    public static final String NO_DB_CONNECTION_AVAILABLE = "No database connection available";
 
     @FXML
     protected JFXListView<Movie> movieListView = new JFXListView<>();
-
     @FXML
     protected VBox navigationMenu;
-
     @FXML
-    public JFXButton navigationButton;
-
+    protected JFXButton navigationButton;
     @FXML
-    public JFXButton aboutButton;
+    protected JFXButton aboutButton;
 
     protected SVGPath cross = new SVGPath();
-
     protected SVGPath burger = new SVGPath();
+
     protected final ObservableList<Movie> movies = FXCollections.observableArrayList();
-
     protected ClickEventHandler<Movie> onWatchlistButtonClicked;
-
     protected WatchlistRepository repository;
 
-    public static final String NO_DB_CONNECTION_AVAILABLE = "No database connection available";
+    protected boolean isWatchlistCell = false;
 
-    public void initialize() {
+    protected void initialize() {
 
         if (repository == null) {
             try {
@@ -76,7 +72,7 @@ public abstract class AbstractViewController {
         navigationButton.setGraphic(burger);
 
         movieListView.setItems(movies);
-        movieListView.setCellFactory(e -> new MovieCell(onWatchlistButtonClicked));
+        movieListView.setCellFactory(e -> new MovieCell(onWatchlistButtonClicked, isWatchlistCell));
 
         navigationButton.setOnMouseClicked(e -> toggleNavigation());
         aboutButton.setOnMouseClicked(e -> showAboutInformation());
