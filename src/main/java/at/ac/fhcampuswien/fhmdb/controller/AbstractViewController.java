@@ -92,7 +92,7 @@ public abstract class AbstractViewController {
         dialog.setContentText("""
                 FHMDb features a movie list with rich information.
                 To support this free application please consider giving us full points for this assignment. \n \n
-                Developers: \n Sorin Lazar \n Burak Kongo \n Benjamin Lichtenstein
+                Developers: \n Sorin Lazar \n Burak Kongo \n Benjamin Lichtenstein \n
                 """);
         dialog.getDialogPane().getButtonTypes().add(okButton);
 
