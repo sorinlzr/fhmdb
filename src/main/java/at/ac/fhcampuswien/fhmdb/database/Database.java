@@ -12,12 +12,13 @@ public class Database {
     private static final String DB_URL = "jdbc:h2:file:./db/fhmdb";
     private static final String USERNAME = "user";
     private static final String PASSWORD = "password";
-    private ConnectionSource connectionSource;
     private Dao<WatchlistEntity, Long> dao;
 
-    private static final String CONNECTION_ERROR_MESSAGE = "Failed to create a connection to the database";
+    private static final String CONNECTION_ERROR_MESSAGE = "Failed to create a connection to the database DB";
+    private static final String DATABASE_CLOSE_ERROR_MESSAGE = "Failed to close the connection to the database";
 
     private static Database instance;
+    private static ConnectionSource connectionSource;
 
     public Database() throws DatabaseException {
         createConnectionSource();
@@ -32,7 +33,7 @@ public class Database {
         return instance;
     }
 
-    private void createConnectionSource() throws DatabaseException{
+    private static void createConnectionSource() throws DatabaseException{
         try {
             connectionSource = new JdbcConnectionSource(DB_URL, USERNAME, PASSWORD);
         } catch (SQLException | IllegalArgumentException e) {
@@ -40,9 +41,13 @@ public class Database {
         }
     }
 
-    public void closeConnection() throws Exception {
+    public static void closeConnection() throws DatabaseException {
         if (connectionSource != null) {
-            connectionSource.close();
+            try {
+                connectionSource.close();
+            } catch (Exception e) {
+                throw new DatabaseException(DATABASE_CLOSE_ERROR_MESSAGE, e);
+            }
         }
     }
 

@@ -7,11 +7,14 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
 @DatabaseTable(tableName = "watchlist")
 public class WatchlistEntity {
+    public static final String DELIMITER = ",";
     @DatabaseField(generatedId = true)
     private long id;
 
@@ -69,16 +72,18 @@ public class WatchlistEntity {
     public String listToString(List<String> list) {
         return list.stream()
                 .map(String::toString)
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining(DELIMITER));
     }
     public static String genreListToString(List<Genre> genres) {
         return genres.stream()
                 .map(Enum::name)
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining(DELIMITER));
     }
 
     public List<String> stringToList(String string) {
-        return new ArrayList<>(Arrays.asList(string.split(",")));
+        if(string == null)
+            return new ArrayList<>();
+        return Arrays.stream(string.split(DELIMITER)).toList();
     }
 
     public String getApiId() {
@@ -98,9 +103,10 @@ public class WatchlistEntity {
     }
 
     public List<Genre> getGenres() {
-        return stringToList(genres).stream()
+        return Optional.of(stringToList(genres).stream()
+                .filter(Predicate.not(String::isEmpty))
                 .map(Genre::valueOf)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())).orElse(new ArrayList<>());
     }
 
     public int getReleaseYear() {
@@ -115,15 +121,15 @@ public class WatchlistEntity {
         return rating;
     }
 
-    public String getMainCast() {
-        return mainCast;
+    public List<String> getMainCast() {
+        return stringToList(mainCast);
     }
 
-    public String getDirectors() {
-        return directors;
+    public List<String> getDirectors() {
+        return stringToList(directors);
     }
 
-    public String getWriters() {
-        return writers;
+    public List<String> getWriters() {
+        return stringToList(writers);
     }
 }

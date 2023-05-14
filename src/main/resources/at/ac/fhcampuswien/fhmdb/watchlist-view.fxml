@@ -3,19 +3,19 @@
 <?import com.jfoenix.controls.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <StackPane fx:id="parent" prefWidth="950" maxWidth="Infinity" xmlns="http://javafx.com/javafx/15.0.1"
            xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="at.ac.fhcampuswien.fhmdb.controller.HomeController"
+           fx:controller="at.ac.fhcampuswien.fhmdb.controller.WatchlistController"
            stylesheets="@styles.css" alignment="CENTER_LEFT"
            minHeight="700">
+
     <VBox fx:id="navigationMenu" styleClass="background-white"
           visible="false" managed="false"
           maxWidth="200">
-        <JFXButton fx:id="homeButton" styleClass="background-light-black, text-white">Home</JFXButton>
-        <JFXButton fx:id="watchlistButton" styleClass="background-white">Watchlist</JFXButton>
+        <JFXButton fx:id="homeButton" styleClass="background-white">Home</JFXButton>
+        <JFXButton fx:id="watchlistButton" styleClass="background-light-black, text-white">Watchlist</JFXButton>
         <JFXButton fx:id="aboutButton" styleClass="background-white">About</JFXButton>
     </VBox>
     <HBox>
@@ -42,22 +42,7 @@
                 <JFXButton fx:id="navigationButton" style="-fx-background-color: transparent"/>
             </HBox>
 
-            <HBox spacing="5" styleClass="background-black">
-                <JFXButton fx:id="sortBtn" text="Sort (desc)"/>
-                <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0" promptText="Search FHMDb"/>
-                <JFXComboBox fx:id="genreComboBox" focusColor="#f5c518" styleClass="filter-combo-box"/>
-                <JFXComboBox fx:id="releaseYearPicker" focusColor="#f5c518" styleClass="filter-combo-box"/>
-                <JFXComboBox fx:id="ratingComboBox" focusColor="#f5c518" styleClass="filter-combo-box"/>
-                <JFXButton fx:id="searchBtn" text="Search"/>
-                <JFXButton fx:id="resetFilterBtn" styleClass="text-red" text="Reset Filter"/>
-
-                <padding>
-                    <Insets bottom="20.0" left="10.0" top="20.0"/>
-                </padding>
-            </HBox>
-
             <JFXListView fx:id="movieListView" styleClass="background-black" VBox.vgrow="ALWAYS"/>
         </VBox>
     </HBox>
 </StackPane>
-

@@ -39,12 +39,12 @@ JFXButton{
 }
 
 /* IDs */
-#navigation {
+#navigationMenu {
     -fx-view-order: -1;
     -fx-min-width: 200px;
 }
 
-#navigation JFXButton {
+#navigationMenu JFXButton {
     -fx-padding: 10px 0px;
     -fx-min-width: 200px;
     -fx-background-radius: 0;

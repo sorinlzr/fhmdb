@@ -17,7 +17,10 @@ module at.ac.fhcampuswien.fhmdb {
     exports at.ac.fhcampuswien.fhmdb.filter;
     exports at.ac.fhcampuswien.fhmdb.ui;
     exports at.ac.fhcampuswien.fhmdb.exceptions;
+    exports at.ac.fhcampuswien.fhmdb.handler;
     exports at.ac.fhcampuswien.fhmdb.dao;
     opens at.ac.fhcampuswien.fhmdb.dao to javafx.fxml;
     opens at.ac.fhcampuswien.fhmdb.models to ormlite.jdbc;
+    opens at.ac.fhcampuswien.fhmdb.controller to javafx.fxml;
+    exports at.ac.fhcampuswien.fhmdb.controller;
 }

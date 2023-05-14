@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.service;
 
+import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 
 import okhttp3.HttpUrl;
@@ -16,12 +17,13 @@ import java.util.List;
 public class MovieAPIService {
 
     private static final String API = "https://prog2.fh-campuswien.ac.at/";
+    public static final String API_FETCH_ERROR = "Error while fetching movies from API";
 
     private MovieAPIService() {
         throw new IllegalStateException("Utility class");
     }
 
-    public static List<Movie> getMovies() throws IOException {
+    public static List<Movie> getMovies() throws MovieApiException {
         Request request = new Request.Builder()
                 .url(API.concat("movies"))
                 .header("User-Agent", "http.agent")
@@ -31,7 +33,7 @@ public class MovieAPIService {
         return makeMovieRequest(request);
     }
 
-    public static List<Movie> getMoviesBy(String text, String genre, String releaseYear, String ratingFrom) throws IOException {
+    public static List<Movie> getMoviesBy(String text, String genre, String releaseYear, String ratingFrom) throws MovieApiException {
         HttpUrl url = new HttpUrl.Builder()
                 .scheme("https")
                 .host("prog2.fh-campuswien.ac.at")
@@ -51,7 +53,7 @@ public class MovieAPIService {
         return makeMovieRequest(request);
     }
 
-    private static List<Movie> makeMovieRequest(Request request) throws IOException {
+    private static List<Movie> makeMovieRequest(Request request) throws MovieApiException {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
 
         try (Response response = client.newCall(request).execute()) {
@@ -63,6 +65,8 @@ public class MovieAPIService {
             }
 
             return new ArrayList<>();
+        } catch (IOException e) {
+            throw new MovieApiException(API_FETCH_ERROR, e);
         }
     }
 }
