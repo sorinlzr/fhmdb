@@ -111,7 +111,9 @@ public abstract class AbstractViewController {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Error");
         alert.setHeaderText(message);
-        alert.initOwner(navigationMenu.getScene().getWindow());
+        if (navigationMenu != null && navigationMenu.getScene() != null) {
+            alert.initOwner(navigationMenu.getScene().getWindow());
+        }
         alert.showAndWait();
     }
 
@@ -119,7 +121,9 @@ public abstract class AbstractViewController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Oops!");
         alert.setHeaderText(message);
-        alert.initOwner(navigationMenu.getScene().getWindow());
+        if (navigationMenu != null && navigationMenu.getScene() != null) {
+            alert.initOwner(navigationMenu.getScene().getWindow());
+        }
         alert.showAndWait();
     }
 
