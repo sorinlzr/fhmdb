@@ -52,7 +52,7 @@ public abstract class AbstractViewController {
 
         if (repository == null) {
             try {
-                repository = new WatchlistRepository();
+                repository = WatchlistRepository.getInstance();
             } catch (DatabaseException e) {
                 showAlertMessage(e.getMessage());
             }
