@@ -9,6 +9,8 @@ import at.ac.fhcampuswien.fhmdb.filter.Year;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistEntity;
 import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
+import at.ac.fhcampuswien.fhmdb.subscription.Observer;
+import at.ac.fhcampuswien.fhmdb.subscription.EventType;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import javafx.fxml.FXML;
@@ -19,7 +21,10 @@ import javafx.scene.layout.StackPane;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HomeController extends AbstractViewController {
+import static at.ac.fhcampuswien.fhmdb.subscription.EventType.ADD_TO_WATCHLIST;
+import static at.ac.fhcampuswien.fhmdb.subscription.EventType.ALREADY_ON_WATCHLIST;
+
+public class HomeController extends AbstractViewController implements Observer {
 
     @FXML
     private StackPane parent;
@@ -57,6 +62,8 @@ public class HomeController extends AbstractViewController {
     public void initialize() {
         super.initialize();
         sortMovies();
+        repository.subscribe(ADD_TO_WATCHLIST, this);
+        repository.subscribe(ALREADY_ON_WATCHLIST, this);
 
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setValue(Genre.NO_FILTER);
@@ -73,8 +80,9 @@ public class HomeController extends AbstractViewController {
             try {
                 if (repository == null) throw new DatabaseException(NO_DB_CONNECTION_AVAILABLE);
                 repository.addToWatchlist(new WatchlistEntity(clickedItem));
+                repository.notify(ADD_TO_WATCHLIST);
             } catch (DatabaseException e) {
-                showInfoMessage(e.getMessage());
+                repository.notify(ALREADY_ON_WATCHLIST);
             }
         };
 
@@ -207,5 +215,13 @@ public class HomeController extends AbstractViewController {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));
         renderScene(fxmlLoader, parent);
 
+    }
+
+    @Override
+    public void update(EventType eventType) {
+        switch (eventType) {
+            case ADD_TO_WATCHLIST -> showInfoMessage(eventType.getDescription());
+            case ALREADY_ON_WATCHLIST -> showAlertMessage(eventType.getDescription());
+        }
     }
 }
