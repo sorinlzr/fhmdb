@@ -12,9 +12,17 @@ public class WatchlistRepository {
     private final Dao<WatchlistEntity, Long> dao;
     private static final String CONNECTION_ERROR_MESSAGE = "Failed to create a connection to the database";
     private static final String MOVIE_ALREADY_IN_THE_WATCHLIST = "Selected movie is already in the watchlist";
+    private static WatchlistRepository instance = null;
 
-    public WatchlistRepository() throws DatabaseException {
+    private WatchlistRepository() throws DatabaseException {
         this.dao = Database.getInstance().getWatchlistDao();
+    }
+
+    public static WatchlistRepository getInstance() throws DatabaseException {
+        if(instance == null){
+            instance = new WatchlistRepository();
+        }
+        return instance;
     }
 
     public void removeFromWatchlist(WatchlistEntity movie) throws DatabaseException {
