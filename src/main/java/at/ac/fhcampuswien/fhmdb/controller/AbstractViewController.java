@@ -42,7 +42,7 @@ public abstract class AbstractViewController {
     protected SVGPath cross = new SVGPath();
     protected SVGPath burger = new SVGPath();
 
-    protected final ObservableList<Movie> movies = FXCollections.observableArrayList();
+    public final ObservableList<Movie> movies = FXCollections.observableArrayList();
     protected ClickEventHandler<Movie> onWatchlistButtonClicked;
     protected WatchlistRepository repository;
 
@@ -59,7 +59,6 @@ public abstract class AbstractViewController {
         }
 
         movies.addAll(getAllMoviesOrEmptyList());
-        movies.sort(Comparator.naturalOrder());
 
         burger.setContent(SVG.BURGER);
         burger.setStroke(Color.WHITE);

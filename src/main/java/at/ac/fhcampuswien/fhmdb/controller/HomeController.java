@@ -9,6 +9,8 @@ import at.ac.fhcampuswien.fhmdb.filter.Year;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistEntity;
 import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
+import at.ac.fhcampuswien.fhmdb.state.DefaultState;
+import at.ac.fhcampuswien.fhmdb.state.State;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import javafx.fxml.FXML;
@@ -38,11 +40,10 @@ public class HomeController extends AbstractViewController {
     private JFXButton resetFilterBtn;
 
     @FXML
-    private JFXButton sortBtn;
+    public JFXButton sortBtn;
 
-    private static final String SORT_DEFAULT_TEXT_ASC = "Sort (asc)";
+    public State state;
 
-    private static final String SORT_DEFAULT_TEXT_DESC = "Sort (desc)";
     @FXML
     private JFXComboBox<Genre> genreComboBox;
 
@@ -56,7 +57,8 @@ public class HomeController extends AbstractViewController {
 
     public void initialize() {
         super.initialize();
-        sortMovies();
+
+        state = new DefaultState(this);
 
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setValue(Genre.NO_FILTER);
@@ -79,13 +81,7 @@ public class HomeController extends AbstractViewController {
         };
 
         sortBtn.setOnAction(actionEvent -> {
-            if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
-                sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
-            } else {
-                sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
-            }
-
-            sortMovies();
+            state.pressSortBtn();
         });
 
         watchlistButton.setOnMouseClicked(e -> {
@@ -95,18 +91,20 @@ public class HomeController extends AbstractViewController {
         resetFilterBtn.setOnAction(actionEvent -> resetFilter());
     }
 
+    public void setState(State state) {
+        this.state = state;
+    }
+
     private void resetFilter() {
         movies.clear();
         searchField.clear();
-
-        sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
 
         genreComboBox.setValue(Genre.NO_FILTER);
         releaseYearPicker.setValue(Year.NO_FILTER);
         ratingComboBox.setValue(Rating.NO_FILTER);
 
         movies.addAll(getAllMoviesOrEmptyList());
-        sortMovies();
+        state = new DefaultState(this);
     }
 
     private void setFilter() {
@@ -126,15 +124,7 @@ public class HomeController extends AbstractViewController {
         }
 
         movies.addAll(moviesWithFilter);
-        sortMovies();
-    }
-
-    private void sortMovies() {
-        if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
-            movies.sort(Collections.reverseOrder());
-        } else {
-            movies.sort(Comparator.naturalOrder());
-        }
+        state.pressSortBtn();
     }
 
     protected List<Movie> getAllMoviesOrEmptyList() {
