@@ -77,6 +77,10 @@ public class WatchlistRepository implements Observable {
         users.add(listener);
     }
 
+    public void unsubscribe(EventType eventType, Observer listener) {
+        if (listeners.get(eventType) != null) listeners.get(eventType).remove(listener);
+    }
+
     public void notify(EventType eventType) {
         List<Observer> users = listeners.get(eventType);
         for (Observer listener : users) {

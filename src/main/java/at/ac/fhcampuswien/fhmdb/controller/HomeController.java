@@ -215,6 +215,9 @@ public class HomeController extends AbstractViewController implements Observer {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));
         renderScene(fxmlLoader, parent);
 
+        // we unsubscribe this controller because when we switch the view, a new controller is created and the old one is no longer in use
+        repository.unsubscribe(ADD_TO_WATCHLIST, this);
+        repository.unsubscribe(ALREADY_ON_WATCHLIST, this);
     }
 
     @Override

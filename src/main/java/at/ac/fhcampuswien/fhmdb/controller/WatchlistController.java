@@ -34,6 +34,7 @@ public class WatchlistController extends AbstractViewController implements Obser
             try {
                 repository.removeFromWatchlist(new WatchlistEntity(clickedItem));
                 repository.notify(REMOVE_FROM_WATCHLIST);
+                repository.unsubscribe(REMOVE_FROM_WATCHLIST, this);
                 reloadView();
             } catch (DatabaseException e) {
                 showInfoMessage(e.getMessage());
@@ -67,6 +68,9 @@ public class WatchlistController extends AbstractViewController implements Obser
     public void switchView() {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/home-view.fxml"));
         renderScene(fxmlLoader, parent);
+
+        // we unsubscribe this controller because when we switch the view, a new controller is created and the old one is no longer in use
+        repository.unsubscribe(REMOVE_FROM_WATCHLIST, this);
     }
 
     @Override
