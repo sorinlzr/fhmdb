@@ -25,7 +25,7 @@ public class WatchlistController extends AbstractViewController {
         this.isWatchlistCell = true;
         super.initialize();
 
-        this.onWatchlistButtonClicked = (clickedItem) -> {
+        this.onWatchlistButtonClicked = clickedItem -> {
             try {
                 repository.removeFromWatchlist(new WatchlistEntity(clickedItem));
                 reloadView();
@@ -34,9 +34,7 @@ public class WatchlistController extends AbstractViewController {
             }
         };
 
-        homeButton.setOnMouseClicked(e -> {
-            switchView();
-        });
+        homeButton.setOnMouseClicked(e -> switchView());
     }
 
     @Override
@@ -55,11 +53,13 @@ public class WatchlistController extends AbstractViewController {
 
     public void reloadView() {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));
+        fxmlLoader.setControllerFactory(ControllerFactory.getInstance());
         renderScene(fxmlLoader, parent);
     }
 
     public void switchView() {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/home-view.fxml"));
+        fxmlLoader.setControllerFactory(ControllerFactory.getInstance());
         renderScene(fxmlLoader, parent);
     }
 }

@@ -54,6 +54,21 @@ public class HomeController extends AbstractViewController {
 
     private static final String NO_FILTER = "";
 
+    // Single instance of HomeController
+    private static HomeController instance;
+
+    // Private constructor to prevent direct instantiation
+    private HomeController() {}
+
+    // Public method to get the single instance of HomeController
+    public static synchronized HomeController getInstance() {
+        if (instance == null) {
+            instance = new HomeController();
+        }
+        return instance;
+    }
+
+    @Override
     public void initialize() {
         super.initialize();
         sortMovies();
@@ -69,7 +84,7 @@ public class HomeController extends AbstractViewController {
 
         searchBtn.setOnAction(actionEvent -> setFilter());
 
-        onWatchlistButtonClicked = (clickedItem) -> {
+        onWatchlistButtonClicked = clickedItem -> {
             try {
                 if (repository == null) throw new DatabaseException(NO_DB_CONNECTION_AVAILABLE);
                 repository.addToWatchlist(new WatchlistEntity(clickedItem));
@@ -205,7 +220,7 @@ public class HomeController extends AbstractViewController {
 
     public void switchView() {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));
+        fxmlLoader.setControllerFactory(ControllerFactory.getInstance());
         renderScene(fxmlLoader, parent);
-
     }
 }
