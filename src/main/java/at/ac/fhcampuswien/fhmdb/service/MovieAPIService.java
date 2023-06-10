@@ -16,7 +16,8 @@ import java.util.List;
 
 public class MovieAPIService {
 
-    private static final String API = "https://prog2.fh-campuswien.ac.at/";
+    private static final String SCHEME = "https";
+    private static final String HOST = "prog2.fh-campuswien.ac.at";
     public static final String API_FETCH_ERROR = "Error while fetching movies from API";
 
     private MovieAPIService() {
@@ -24,8 +25,14 @@ public class MovieAPIService {
     }
 
     public static List<Movie> getMovies() throws MovieApiException {
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme(SCHEME)
+                .host(HOST)
+                .addPathSegment("movies")
+                .build();
+
         Request request = new Request.Builder()
-                .url(API.concat("movies"))
+                .url(url)
                 .header("User-Agent", "http.agent")
                 .method("GET", null)
                 .build();
@@ -35,8 +42,8 @@ public class MovieAPIService {
 
     public static List<Movie> getMoviesBy(String text, String genre, String releaseYear, String ratingFrom) throws MovieApiException {
         HttpUrl url = new HttpUrl.Builder()
-                .scheme("https")
-                .host("prog2.fh-campuswien.ac.at")
+                .scheme(SCHEME)
+                .host(HOST)
                 .addPathSegment("movies")
                 .addQueryParameter("query", text)
                 .addQueryParameter("genre", genre)
