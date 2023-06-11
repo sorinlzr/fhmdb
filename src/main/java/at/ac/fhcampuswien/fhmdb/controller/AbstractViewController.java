@@ -122,7 +122,7 @@ public abstract class AbstractViewController {
 
     protected void showInfoMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Oops!");
+        alert.setTitle("Info");
         alert.setHeaderText(message);
         if (navigationMenu != null && navigationMenu.getScene() != null) {
             alert.initOwner(navigationMenu.getScene().getWindow());
