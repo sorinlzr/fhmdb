@@ -9,4 +9,9 @@ public class DefaultState extends State{
         super(homeController);
         homeController.sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
     }
+
+    @Override
+    public void pressFilterBtn(){
+        homeController.sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
+    }
 }

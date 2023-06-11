@@ -21,9 +21,5 @@ public abstract class State {
         homeController.sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
     }
 
-    public void pressFilterBtn(){
-        homeController.setCurrentState(new DESCState(homeController));
-        homeController.getMovies().sort(Comparator.reverseOrder());
-        homeController.sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
-    }
+    public abstract void pressFilterBtn();
 }

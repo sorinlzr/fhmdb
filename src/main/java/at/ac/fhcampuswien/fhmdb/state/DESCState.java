@@ -9,4 +9,10 @@ public class DESCState extends State {
         super(homeController);
     }
 
+    @Override
+    public void pressFilterBtn() {
+        homeController.setCurrentState(new DESCState(homeController));
+        homeController.getMovies().sort(Comparator.reverseOrder());
+        homeController.sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
+    }
 }
