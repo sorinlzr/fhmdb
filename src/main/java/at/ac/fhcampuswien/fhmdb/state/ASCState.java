@@ -17,7 +17,6 @@ public class ASCState extends State{
     }
 
     public void pressFilterBtn(){
-        homeController.setCurrentState(new ASCState(homeController));
         homeController.getMovies().sort(Comparator.naturalOrder());
         homeController.sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
     }

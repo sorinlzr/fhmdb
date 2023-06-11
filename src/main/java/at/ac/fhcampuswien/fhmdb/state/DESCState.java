@@ -11,7 +11,6 @@ public class DESCState extends State {
 
     @Override
     public void pressFilterBtn() {
-        homeController.setCurrentState(new DESCState(homeController));
         homeController.getMovies().sort(Comparator.reverseOrder());
         homeController.sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
     }
