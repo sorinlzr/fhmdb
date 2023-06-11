@@ -9,6 +9,8 @@ import at.ac.fhcampuswien.fhmdb.filter.Year;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistEntity;
 import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
+import at.ac.fhcampuswien.fhmdb.state.DefaultState;
+import at.ac.fhcampuswien.fhmdb.state.State;
 import at.ac.fhcampuswien.fhmdb.subscription.Observer;
 import at.ac.fhcampuswien.fhmdb.subscription.EventType;
 import com.jfoenix.controls.JFXButton;
@@ -43,11 +45,10 @@ public class HomeController extends AbstractViewController implements Observer {
     private JFXButton resetFilterBtn;
 
     @FXML
-    private JFXButton sortBtn;
+    public JFXButton sortBtn;
 
-    private static final String SORT_DEFAULT_TEXT_ASC = "Sort (asc)";
+    public State currentState;
 
-    private static final String SORT_DEFAULT_TEXT_DESC = "Sort (desc)";
     @FXML
     private JFXComboBox<Genre> genreComboBox;
 
@@ -61,7 +62,9 @@ public class HomeController extends AbstractViewController implements Observer {
 
     public void initialize() {
         super.initialize();
-        sortMovies();
+        
+        currentState = new DefaultState(this);
+      
         repository.subscribe(ADD_TO_WATCHLIST, this);
         repository.subscribe(ALREADY_ON_WATCHLIST, this);
 
@@ -87,13 +90,7 @@ public class HomeController extends AbstractViewController implements Observer {
         };
 
         sortBtn.setOnAction(actionEvent -> {
-            if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
-                sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
-            } else {
-                sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
-            }
-
-            sortMovies();
+            currentState.pressSortBtn();
         });
 
         watchlistButton.setOnMouseClicked(e -> {
@@ -103,18 +100,20 @@ public class HomeController extends AbstractViewController implements Observer {
         resetFilterBtn.setOnAction(actionEvent -> resetFilter());
     }
 
+    public void setCurrentState(State currentState) {
+        this.currentState = currentState;
+    }
+
     private void resetFilter() {
         movies.clear();
         searchField.clear();
-
-        sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
 
         genreComboBox.setValue(Genre.NO_FILTER);
         releaseYearPicker.setValue(Year.NO_FILTER);
         ratingComboBox.setValue(Rating.NO_FILTER);
 
         movies.addAll(getAllMoviesOrEmptyList());
-        sortMovies();
+        currentState = new DefaultState(this);
     }
 
     private void setFilter() {
@@ -134,15 +133,7 @@ public class HomeController extends AbstractViewController implements Observer {
         }
 
         movies.addAll(moviesWithFilter);
-        sortMovies();
-    }
-
-    private void sortMovies() {
-        if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
-            movies.sort(Collections.reverseOrder());
-        } else {
-            movies.sort(Comparator.naturalOrder());
-        }
+        currentState.pressFilterBtn();
     }
 
     protected List<Movie> getAllMoviesOrEmptyList() {
