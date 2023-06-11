@@ -9,11 +9,4 @@ public class DefaultState extends State{
         super(homeController);
         homeController.sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
     }
-
-    @Override
-    public void pressSortBtn() {
-        homeController.setState(new ASCState(homeController));
-        homeController.movies.sort(Comparator.naturalOrder());
-        homeController.sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
-    }
 }

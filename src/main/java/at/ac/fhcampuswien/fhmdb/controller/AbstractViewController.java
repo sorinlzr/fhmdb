@@ -42,7 +42,7 @@ public abstract class AbstractViewController {
     protected SVGPath cross = new SVGPath();
     protected SVGPath burger = new SVGPath();
 
-    public final ObservableList<Movie> movies = FXCollections.observableArrayList();
+    protected final ObservableList<Movie> movies = FXCollections.observableArrayList();
     protected ClickEventHandler<Movie> onWatchlistButtonClicked;
     protected WatchlistRepository repository;
 
@@ -76,6 +76,10 @@ public abstract class AbstractViewController {
         navigationButton.setOnMouseClicked(e -> toggleNavigation());
         aboutButton.setOnMouseClicked(e -> showAboutInformation());
 
+    }
+
+    public ObservableList<Movie> getMovies() {
+        return movies;
     }
 
     private void showAboutInformation() {

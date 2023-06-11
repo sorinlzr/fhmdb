@@ -2,6 +2,8 @@ package at.ac.fhcampuswien.fhmdb.state;
 
 import at.ac.fhcampuswien.fhmdb.controller.HomeController;
 
+import java.util.Comparator;
+
 public abstract class State {
     protected HomeController homeController;
 
@@ -13,5 +15,15 @@ public abstract class State {
         this.homeController = homeController;
     }
 
-    public abstract void pressSortBtn();
+    public void pressSortBtn(){
+        homeController.setCurrentState(new ASCState(homeController));
+        homeController.getMovies().sort(Comparator.naturalOrder());
+        homeController.sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
+    }
+
+    public void pressFilterBtn(){
+        homeController.setCurrentState(new DESCState(homeController));
+        homeController.getMovies().sort(Comparator.reverseOrder());
+        homeController.sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
+    }
 }

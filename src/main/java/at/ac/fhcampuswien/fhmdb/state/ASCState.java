@@ -11,8 +11,14 @@ public class ASCState extends State{
 
     @Override
     public void pressSortBtn() {
-        homeController.setState(new DESCState(homeController));
-        homeController.movies.sort(Comparator.reverseOrder());
+        homeController.setCurrentState(new DESCState(homeController));
+        homeController.getMovies().sort(Comparator.reverseOrder());
         homeController.sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
+    }
+
+    public void pressFilterBtn(){
+        homeController.setCurrentState(new ASCState(homeController));
+        homeController.getMovies().sort(Comparator.naturalOrder());
+        homeController.sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
     }
 }

@@ -42,7 +42,7 @@ public class HomeController extends AbstractViewController {
     @FXML
     public JFXButton sortBtn;
 
-    public State state;
+    public State currentState;
 
     @FXML
     private JFXComboBox<Genre> genreComboBox;
@@ -58,7 +58,7 @@ public class HomeController extends AbstractViewController {
     public void initialize() {
         super.initialize();
 
-        state = new DefaultState(this);
+        currentState = new DefaultState(this);
 
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setValue(Genre.NO_FILTER);
@@ -81,7 +81,7 @@ public class HomeController extends AbstractViewController {
         };
 
         sortBtn.setOnAction(actionEvent -> {
-            state.pressSortBtn();
+            currentState.pressSortBtn();
         });
 
         watchlistButton.setOnMouseClicked(e -> {
@@ -91,8 +91,8 @@ public class HomeController extends AbstractViewController {
         resetFilterBtn.setOnAction(actionEvent -> resetFilter());
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public void setCurrentState(State currentState) {
+        this.currentState = currentState;
     }
 
     private void resetFilter() {
@@ -104,7 +104,7 @@ public class HomeController extends AbstractViewController {
         ratingComboBox.setValue(Rating.NO_FILTER);
 
         movies.addAll(getAllMoviesOrEmptyList());
-        state = new DefaultState(this);
+        currentState = new DefaultState(this);
     }
 
     private void setFilter() {
@@ -124,7 +124,7 @@ public class HomeController extends AbstractViewController {
         }
 
         movies.addAll(moviesWithFilter);
-        state.pressSortBtn();
+        currentState.pressFilterBtn();
     }
 
     protected List<Movie> getAllMoviesOrEmptyList() {
