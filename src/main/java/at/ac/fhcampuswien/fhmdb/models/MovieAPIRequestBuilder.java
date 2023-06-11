@@ -18,47 +18,62 @@ public class MovieAPIRequestBuilder {
         this.base = base;
     }
 
-    public String build() throws IllegalAccessException {
+    public MovieAPIRequestBuilder query(String query) {
+        this.query = query;
+        return this;
+    }
+
+    public MovieAPIRequestBuilder genre(String genre) {
+        this.genre = genre;
+        return this;
+    }
+
+    public MovieAPIRequestBuilder releaseYear(String releaseYear) {
+        this.releaseYear = releaseYear;
+        return this;
+    }
+
+    public MovieAPIRequestBuilder ratingFrom(String ratingFrom) {
+        this.ratingFrom = ratingFrom;
+        return this;
+    }
+
+    public String build() {
         String regex = "/\\d+$";
         boolean isSpecificMovieRequested = base.matches(regex);
         if (isSpecificMovieRequested) {
             return base;
         } else {
-            String url = base;
+            StringBuilder url = new StringBuilder(base);
             boolean isFirstQueryParameter = true;
-            for (Field field : getQueryParameters()) {
+            for (Field field : this.getClass().getDeclaredFields()) {
                 String fieldName = field.getName();
-                field.setAccessible(true);
-                String value = (String) field.get(this);
-                if (value == null || value.isEmpty()) {
-                    if (isFirstQueryParameter) {
-                        url += "?";
-                        isFirstQueryParameter = false;
-                    } else {
-                        url += "&";
+                if (!fieldName.equals("base")) {
+                    field.setAccessible(true);
+
+                    String value = null;
+                    try {
+                        value = (String) field.get(this);
+                    } catch (IllegalAccessException e) {
+                        throw new UnsupportedOperationException(e);
                     }
 
-                    url += fieldName;
-                    url += "=";
-                    url += value;
+                    if (value != null && !value.isEmpty()) {
+                        if (isFirstQueryParameter) {
+                            url.append("?");
+                            isFirstQueryParameter = false;
+                        } else {
+                            url.append("&");
+                        }
+
+                        url.append(fieldName);
+                        url.append("=");
+                        url.append(value);
+                    }
                 }
             }
 
-            return url;
+            return url.toString();
         }
-    }
-
-    private Field[] getQueryParameters() {
-        Field[] fields = this.getClass().getDeclaredFields();
-        Field[] queryParameters = new Field[fields.length];
-
-        for (int i = 0; i < fields.length; i++) {
-            if (fields[i].getName().equals("base")) {
-                continue;
-            }
-            queryParameters[i] = fields[i];
-        }
-
-        return queryParameters;
     }
 }
