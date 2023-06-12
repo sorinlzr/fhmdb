@@ -3,7 +3,7 @@ package at.ac.fhcampuswien.fhmdb.service;
 import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 
-import okhttp3.HttpUrl;
+import at.ac.fhcampuswien.fhmdb.models.MovieAPIRequestBuilder;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MovieAPIService {
-
-    private static final String API = "https://prog2.fh-campuswien.ac.at/";
+    private static final String BASE = "https://prog2.fh-campuswien.ac.at/movies";
     public static final String API_FETCH_ERROR = "Error while fetching movies from API";
 
     private MovieAPIService() {
@@ -24,8 +23,10 @@ public class MovieAPIService {
     }
 
     public static List<Movie> getMovies() throws MovieApiException {
+        String url = new MovieAPIRequestBuilder(BASE).build();
+
         Request request = new Request.Builder()
-                .url(API.concat("movies"))
+                .url(url)
                 .header("User-Agent", "http.agent")
                 .method("GET", null)
                 .build();
@@ -33,15 +34,12 @@ public class MovieAPIService {
         return makeMovieRequest(request);
     }
 
-    public static List<Movie> getMoviesBy(String text, String genre, String releaseYear, String ratingFrom) throws MovieApiException {
-        HttpUrl url = new HttpUrl.Builder()
-                .scheme("https")
-                .host("prog2.fh-campuswien.ac.at")
-                .addPathSegment("movies")
-                .addQueryParameter("query", text)
-                .addQueryParameter("genre", genre)
-                .addQueryParameter("releaseYear", releaseYear)
-                .addQueryParameter("ratingFrom", ratingFrom)
+    public static List<Movie> getMoviesBy(String query, String genre, String releaseYear, String ratingFrom) throws MovieApiException {
+        String url = new MovieAPIRequestBuilder(BASE)
+                .query(query)
+                .genre(genre)
+                .releaseYear(releaseYear)
+                .ratingFrom(ratingFrom)
                 .build();
 
         Request request = new Request.Builder()

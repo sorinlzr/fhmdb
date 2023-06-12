@@ -9,6 +9,10 @@ import at.ac.fhcampuswien.fhmdb.filter.Year;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistEntity;
 import at.ac.fhcampuswien.fhmdb.service.MovieAPIService;
+import at.ac.fhcampuswien.fhmdb.state.DefaultState;
+import at.ac.fhcampuswien.fhmdb.state.State;
+import at.ac.fhcampuswien.fhmdb.subscription.Observer;
+import at.ac.fhcampuswien.fhmdb.subscription.EventType;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import javafx.fxml.FXML;
@@ -19,7 +23,10 @@ import javafx.scene.layout.StackPane;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HomeController extends AbstractViewController {
+import static at.ac.fhcampuswien.fhmdb.subscription.EventType.ADD_TO_WATCHLIST;
+import static at.ac.fhcampuswien.fhmdb.subscription.EventType.ALREADY_ON_WATCHLIST;
+
+public class HomeController extends AbstractViewController implements Observer {
 
     @FXML
     private StackPane parent;
@@ -38,11 +45,10 @@ public class HomeController extends AbstractViewController {
     private JFXButton resetFilterBtn;
 
     @FXML
-    private JFXButton sortBtn;
+    public JFXButton sortBtn;
 
-    private static final String SORT_DEFAULT_TEXT_ASC = "Sort (asc)";
+    public State currentState;
 
-    private static final String SORT_DEFAULT_TEXT_DESC = "Sort (desc)";
     @FXML
     private JFXComboBox<Genre> genreComboBox;
 
@@ -71,7 +77,11 @@ public class HomeController extends AbstractViewController {
     @Override
     public void initialize() {
         super.initialize();
-        sortMovies();
+
+        currentState = new DefaultState(this);
+
+        repository.subscribe(ADD_TO_WATCHLIST, this);
+        repository.subscribe(ALREADY_ON_WATCHLIST, this);
 
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setValue(Genre.NO_FILTER);
@@ -88,19 +98,14 @@ public class HomeController extends AbstractViewController {
             try {
                 if (repository == null) throw new DatabaseException(NO_DB_CONNECTION_AVAILABLE);
                 repository.addToWatchlist(new WatchlistEntity(clickedItem));
+                repository.notify(ADD_TO_WATCHLIST);
             } catch (DatabaseException e) {
-                showInfoMessage(e.getMessage());
+                repository.notify(ALREADY_ON_WATCHLIST);
             }
         };
 
         sortBtn.setOnAction(actionEvent -> {
-            if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
-                sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
-            } else {
-                sortBtn.setText(SORT_DEFAULT_TEXT_ASC);
-            }
-
-            sortMovies();
+            currentState.pressSortBtn();
         });
 
         watchlistButton.setOnMouseClicked(e -> {
@@ -110,18 +115,20 @@ public class HomeController extends AbstractViewController {
         resetFilterBtn.setOnAction(actionEvent -> resetFilter());
     }
 
+    public void setCurrentState(State currentState) {
+        this.currentState = currentState;
+    }
+
     private void resetFilter() {
         movies.clear();
         searchField.clear();
-
-        sortBtn.setText(SORT_DEFAULT_TEXT_DESC);
 
         genreComboBox.setValue(Genre.NO_FILTER);
         releaseYearPicker.setValue(Year.NO_FILTER);
         ratingComboBox.setValue(Rating.NO_FILTER);
 
         movies.addAll(getAllMoviesOrEmptyList());
-        sortMovies();
+        currentState = new DefaultState(this);
     }
 
     private void setFilter() {
@@ -141,15 +148,7 @@ public class HomeController extends AbstractViewController {
         }
 
         movies.addAll(moviesWithFilter);
-        sortMovies();
-    }
-
-    private void sortMovies() {
-        if (sortBtn.getText().equals(SORT_DEFAULT_TEXT_ASC)) {
-            movies.sort(Collections.reverseOrder());
-        } else {
-            movies.sort(Comparator.naturalOrder());
-        }
+        currentState.pressFilterBtn();
     }
 
     protected List<Movie> getAllMoviesOrEmptyList() {
@@ -222,5 +221,17 @@ public class HomeController extends AbstractViewController {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));
         fxmlLoader.setControllerFactory(ControllerFactory.getInstance());
         renderScene(fxmlLoader, parent);
+
+        // we unsubscribe this controller because when we switch the view, a new controller is created and the old one is no longer in use
+        repository.unsubscribe(ADD_TO_WATCHLIST, this);
+        repository.unsubscribe(ALREADY_ON_WATCHLIST, this);
+    }
+
+    @Override
+    public void update(EventType eventType) {
+        switch (eventType) {
+            case ADD_TO_WATCHLIST -> showInfoMessage(eventType.getDescription());
+            case ALREADY_ON_WATCHLIST -> showAlertMessage(eventType.getDescription());
+        }
     }
 }

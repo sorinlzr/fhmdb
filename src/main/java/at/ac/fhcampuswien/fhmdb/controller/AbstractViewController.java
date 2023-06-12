@@ -61,7 +61,6 @@ public abstract class AbstractViewController {
         }
 
         movies.addAll(getAllMoviesOrEmptyList());
-        movies.sort(Comparator.naturalOrder());
 
         burger.setContent(SVG.BURGER);
         burger.setStroke(Color.WHITE);
@@ -79,6 +78,10 @@ public abstract class AbstractViewController {
         navigationButton.setOnMouseClicked(e -> toggleNavigation());
         aboutButton.setOnMouseClicked(e -> showAboutInformation());
 
+    }
+
+    public ObservableList<Movie> getMovies() {
+        return movies;
     }
 
     private void showAboutInformation() {
@@ -121,7 +124,7 @@ public abstract class AbstractViewController {
 
     protected void showInfoMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Oops!");
+        alert.setTitle("Info");
         alert.setHeaderText(message);
         if (navigationMenu != null && navigationMenu.getScene() != null) {
             alert.initOwner(navigationMenu.getScene().getWindow());
