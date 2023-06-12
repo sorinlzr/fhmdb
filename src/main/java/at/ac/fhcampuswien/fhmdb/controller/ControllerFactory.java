@@ -1,14 +1,10 @@
 package at.ac.fhcampuswien.fhmdb.controller;
 
 import javafx.util.Callback;
-import java.util.HashMap;
 
 public class ControllerFactory implements Callback<Class<?>, Object> {
     // Single instance of ControllerFactory
     private static ControllerFactory instance;
-
-    // HashMap to store single instances of controller classes
-    private HashMap<Class<?>, Object> instances = new HashMap<>();
 
     // Private constructor to prevent direct instantiation
     private ControllerFactory() {}
@@ -23,16 +19,10 @@ public class ControllerFactory implements Callback<Class<?>, Object> {
 
     @Override
     public Object call(Class<?> aClass) {
-        // If we already have an instance of this controller class, return it
-        if (instances.containsKey(aClass)) {
-            return instances.get(aClass);
-        }
-
-        // Otherwise, create a new instance, store it, and return it
         try {
-            Object controller = aClass.getDeclaredConstructor().newInstance();
-            instances.put(aClass, controller);
-            return controller;
+            // invoke the getInstance() method of controller class via Reflection.
+            // We pass null as parameter because the method is static
+            return aClass.getDeclaredMethod("getInstance").invoke(null);
         } catch (Exception e) {
             e.printStackTrace();
         }

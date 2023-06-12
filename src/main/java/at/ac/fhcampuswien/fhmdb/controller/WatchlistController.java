@@ -20,6 +20,19 @@ public class WatchlistController extends AbstractViewController {
     @FXML
     protected JFXButton homeButton;
 
+    private static WatchlistController instance;
+
+    // Private constructor to prevent direct instantiation
+    private WatchlistController() {}
+
+    // Public method to get the single instance of WatchlistController
+    public static synchronized WatchlistController getInstance() {
+        if (instance == null) {
+            instance = new WatchlistController();
+        }
+        return instance;
+    }
+
     @Override
     public void initialize() {
         this.isWatchlistCell = true;
@@ -28,7 +41,8 @@ public class WatchlistController extends AbstractViewController {
         this.onWatchlistButtonClicked = clickedItem -> {
             try {
                 repository.removeFromWatchlist(new WatchlistEntity(clickedItem));
-                reloadView();
+                movies.remove(clickedItem);
+                movieListView.refresh();
             } catch (DatabaseException e) {
                 showInfoMessage(e.getMessage());
             }
@@ -49,12 +63,6 @@ public class WatchlistController extends AbstractViewController {
         }
 
         return allMovies;
-    }
-
-    public void reloadView() {
-        FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));
-        fxmlLoader.setControllerFactory(ControllerFactory.getInstance());
-        renderScene(fxmlLoader, parent);
     }
 
     public void switchView() {
