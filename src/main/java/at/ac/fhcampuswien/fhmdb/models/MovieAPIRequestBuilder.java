@@ -1,79 +1,62 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
-import java.lang.reflect.Field;
-
 public class MovieAPIRequestBuilder {
+    private final StringBuilder builder;
+    private boolean isFirstQueryParameter = true;
 
-    private String base;
-
-    private String query;
-
-    private String genre;
-
-    private String releaseYear;
-
-    private String ratingFrom;
-
-    public MovieAPIRequestBuilder(String base) {
-        this.base = base;
+    public MovieAPIRequestBuilder(String baseUrl) {
+        builder = new StringBuilder(baseUrl);
     }
 
     public MovieAPIRequestBuilder query(String query) {
-        this.query = query;
+        appendQueryParam(RequestParameter.QUERY, query);
         return this;
     }
 
     public MovieAPIRequestBuilder genre(String genre) {
-        this.genre = genre;
+        appendQueryParam(RequestParameter.GENRE, genre);
         return this;
     }
 
     public MovieAPIRequestBuilder releaseYear(String releaseYear) {
-        this.releaseYear = releaseYear;
+        appendQueryParam(RequestParameter.RELEASE_YEAR, releaseYear);
         return this;
     }
 
-    public MovieAPIRequestBuilder ratingFrom(String ratingFrom) {
-        this.ratingFrom = ratingFrom;
+    public MovieAPIRequestBuilder ratingFrom(String rating) {
+        appendQueryParam(RequestParameter.RATING_FROM, rating);
         return this;
+    }
+
+    private void appendQueryParam(RequestParameter param, String value) {
+        if (value != null && !value.isEmpty()) {
+            if (isFirstQueryParameter) {
+                builder.append("?");
+                isFirstQueryParameter = false;
+            } else {
+                builder.append("&");
+            }
+
+            builder.append(param.name);
+            builder.append("=");
+            builder.append(value);
+        }
     }
 
     public String build() {
-        String regex = "/\\d+$";
-        boolean isSpecificMovieRequested = base.matches(regex);
-        if (isSpecificMovieRequested) {
-            return base;
-        } else {
-            StringBuilder url = new StringBuilder(base);
-            boolean isFirstQueryParameter = true;
-            for (Field field : this.getClass().getDeclaredFields()) {
-                String fieldName = field.getName();
-                if (!fieldName.equals("base")) {
-                    field.setAccessible(true);
+        return builder.toString();
+    }
 
-                    String value = null;
-                    try {
-                        value = (String) field.get(this);
-                    } catch (IllegalAccessException e) {
-                        throw new UnsupportedOperationException(e);
-                    }
+    private enum RequestParameter {
+        QUERY("query"),
+        GENRE("genre"),
+        RELEASE_YEAR("releaseYear"),
+        RATING_FROM("ratingFrom");
 
-                    if (value != null && !value.isEmpty()) {
-                        if (isFirstQueryParameter) {
-                            url.append("?");
-                            isFirstQueryParameter = false;
-                        } else {
-                            url.append("&");
-                        }
+        private final String name;
 
-                        url.append(fieldName);
-                        url.append("=");
-                        url.append(value);
-                    }
-                }
-            }
-
-            return url.toString();
+        RequestParameter(String name) {
+            this.name = name;
         }
     }
 }
