@@ -1,4 +1,4 @@
-## PROG2 - Exercise 1 + 2
+## PROG2 - Exercise 1 + 2 + 3 + 4
 Group 2 - Team 1
 
 ### Start the application
