@@ -24,26 +24,38 @@ public class WatchlistController extends AbstractViewController implements Obser
     @FXML
     protected JFXButton homeButton;
 
+    private static WatchlistController instance;
+
+    // Private constructor to prevent direct instantiation
+    private WatchlistController() {}
+
+    // Public method to get the single instance of WatchlistController
+    public static synchronized WatchlistController getInstance() {
+        if (instance == null) {
+            instance = new WatchlistController();
+        }
+        return instance;
+    }
+
     @Override
     public void initialize() {
         this.isWatchlistCell = true;
         super.initialize();
         repository.subscribe(REMOVE_FROM_WATCHLIST, this);
 
-        this.onWatchlistButtonClicked = (clickedItem) -> {
+        this.onWatchlistButtonClicked = clickedItem -> {
             try {
                 repository.removeFromWatchlist(new WatchlistEntity(clickedItem));
                 repository.notify(REMOVE_FROM_WATCHLIST);
                 repository.unsubscribe(REMOVE_FROM_WATCHLIST, this);
-                reloadView();
+                movies.remove(clickedItem);
+                movieListView.refresh();
             } catch (DatabaseException e) {
                 showInfoMessage(e.getMessage());
             }
         };
 
-        homeButton.setOnMouseClicked(e -> {
-            switchView();
-        });
+        homeButton.setOnMouseClicked(e -> switchView());
     }
 
     @Override
@@ -60,13 +72,9 @@ public class WatchlistController extends AbstractViewController implements Obser
         return allMovies;
     }
 
-    public void reloadView() {
-        FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));
-        renderScene(fxmlLoader, parent);
-    }
-
     public void switchView() {
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/at/ac/fhcampuswien/fhmdb/home-view.fxml"));
+        fxmlLoader.setControllerFactory(ControllerFactory.getInstance());
         renderScene(fxmlLoader, parent);
 
         // we unsubscribe this controller because when we switch the view, a new controller is created and the old one is no longer in use

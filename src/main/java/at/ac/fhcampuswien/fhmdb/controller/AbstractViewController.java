@@ -49,6 +49,8 @@ public abstract class AbstractViewController {
     protected boolean isWatchlistCell = false;
 
     protected void initialize() {
+        movies.clear();
+        movieListView.refresh();
 
         if (repository == null) {
             try {
